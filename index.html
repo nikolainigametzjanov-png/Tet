@@ -1,70 +1,18 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartBelly PRO | Mobile Evolution</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;900&display=swap" rel="stylesheet">
-    <style>
-        body { background-color: #000; color: #fff; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
-        .neon-text { color: #00ffcc; text-shadow: 0 0 10px rgba(0, 255, 204, 0.5); }
-        .glass-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; }
-        .anatomy-container { position: relative; height: 350px; width: 100%; display: flex; justify-content: center; }
-        input[type="number"] { background: transparent; border-bottom: 2px solid #333; color: #00ffcc; font-size: 24px; font-weight: 900; width: 80px; text-align: center; outline: none; transition: 0.3s; }
-        input:focus { border-bottom-color: #00ffcc; }
-        .btn-evolution { background: #fff; color: #000; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; padding: 20px; border-radius: 100px; width: 100%; transition: 0.3s; }
-        .btn-evolution:active { transform: scale(0.95); background: #00ffcc; }
-    </style>
-</head>
-<body class="p-6">
-
-    <header class="mb-8 pt-4">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-black italic">SB <span class="neon-text">PRO</span></h1>
-            <span class="text-[10px] tracking-widest text-gray-500 uppercase">Silverita Labs</span>
-        </div>
-    </header>
-
-    <section class="space-y-6">
-        <h2 class="text-4xl font-black uppercase leading-tight">Personal<br>Matrix</h2>
+<script>
+    const SilveritaEngine = {
+        user: { weight: 88, trauma: 'L4-L5', diabetes: true },
+        retail: { store: 'Selver', discount: 0.15 },
         
-        <div class="grid grid-cols-2 gap-4">
-            <div class="glass-card p-4 text-center">
-                <p class="text-[10px] uppercase text-gray-500 font-bold mb-2">Age</p>
-                <input type="number" value="32">
-            </div>
-            <div class="glass-card p-4 text-center">
-                <p class="text-[10px] uppercase text-gray-500 font-bold mb-2">Weight</p>
-                <input type="number" value="88">
-            </div>
-        </div>
-
-        <div class="glass-card p-5">
-            <p class="text-[10px] uppercase text-gray-500 font-bold mb-4">Active Restrictions</p>
-            <div class="flex flex-wrap gap-2">
-                <span class="px-4 py-2 rounded-full border border-neon-text text-[10px] font-black uppercase text-neon-text">Diabetes</span>
-                <span class="px-4 py-2 rounded-full border border-red-500/50 text-[10px] font-black uppercase text-red-500">Spine</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="anatomy-container my-10">
-        <svg viewBox="0 0 100 200" class="h-full opacity-50">
-            <path d="M50 10 Q60 10 60 25 Q50 35 40 25 Q40 10 50 10" fill="none" stroke="#00ffcc" stroke-width="1"/>
-            <path d="M20 40 L80 40 L75 110 L25 110 Z" fill="rgba(0, 255, 204, 0.1)" stroke="#00ffcc" stroke-width="1"/>
-            <path d="M25 110 L45 190 L55 190 L75 110" fill="none" stroke="#00ffcc" stroke-width="1"/>
-        </svg>
-        <div class="absolute inset-0 flex items-center justify-center">
-             <div class="w-48 h-48 bg-neon-text/5 rounded-full blur-3xl"></div>
-        </div>
-    </section>
-
-    <footer class="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black via-black to-transparent">
-        <button class="btn-evolution shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-            Proceed to Evolution
-        </button>
-    </footer>
-
-    <div class="h-24"></div> </body>
-</html>
+        recalculateMatrix: function() {
+            console.log("SmartBelly PRO: Пересчет биометрии под ограничения...");
+            // Алгоритм фильтрации продуктов из Maxima под диабет
+            this.applyMedicalFilters();
+        },
+        
+        applyMedicalFilters: function() {
+            if(this.user.diabetes) {
+                // Исключение сахаров и быстрых углей из выдачи Selver API
+            }
+        }
+    };
+</script>
