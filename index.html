@@ -4,257 +4,220 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SmartBelly PRO | Silverita Labs OÜ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --neon: #00ffcc; --dark: #05080f; --magenta: #ff00ff; --glass: rgba(15, 23, 35, 0.98); }
-        body { background: var(--dark); color: white; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        :root { --neon: #00ffcc; --glass-bg: rgba(255, 255, 255, 0.04); --border: rgba(255, 255, 255, 0.1); }
         
-        .screen { display: none; min-height: 100vh; flex-direction: column; animation: fadeIn 0.4s ease-out; padding-bottom: 120px; }
-        .screen.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        body { 
+            margin: 0;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            /* Премиальный фон: размытый интерьер */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=2070') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
 
-        .glass { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 36px; backdrop-filter: blur(25px); }
-        .neon-btn { border: 2px solid var(--neon); color: var(--neon); border-radius: 50px; padding: 20px; font-weight: 900; text-transform: uppercase; cursor: pointer; text-align: center; background: transparent; transition: 0.3s; width: 100%; letter-spacing: 2px; font-size: 14px; }
-        .neon-btn:active { transform: scale(0.95); background: var(--neon); color: black; box-shadow: 0 0 40px var(--neon); }
-        
-        .chip { border: 1px solid #222; padding: 14px; border-radius: 18px; font-size: 10px; cursor: pointer; text-align: center; transition: 0.2s; font-weight: 700; text-transform: uppercase; }
-        .chip.active { border-color: var(--neon); color: var(--neon); background: rgba(0, 255, 204, 0.1); box-shadow: 0 0 20px rgba(0, 255, 204, 0.15); }
-        
-        .body-part { fill: #111; stroke: #333; stroke-width: 1.5; transition: 0.4s; }
-        .body-part.selected { stroke: var(--neon); fill: rgba(0, 255, 204, 0.25); filter: drop-shadow(0 0 15px var(--neon)); }
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
 
-        .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; border-top: 1px solid rgba(255, 255, 255, 0.05); display: none; justify-content: space-around; padding: 25px; z-index: 5000; }
-        .tab-bar.visible { display: flex; }
+        .screen { display: none; min-height: 100vh; padding: 20px; animation: fadeIn 0.6s ease; }
+        .screen.active { display: flex; flex-direction: column; }
+
+        .neon-text { color: var(--neon); text-shadow: 0 0 10px rgba(0, 255, 204, 0.5); }
         
-        .ai-glow { animation: pulseGlow 2s infinite ease-in-out; }
-        @keyframes pulseGlow { 0% { box-shadow: 0 0 10px var(--neon); } 50% { box-shadow: 0 0 30px var(--neon); } 100% { box-shadow: 0 0 10px var(--neon); } }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .neon-btn {
+            background: linear-gradient(135deg, var(--neon), #00d2ff);
+            color: #000;
+            border-radius: 18px;
+            padding: 18px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 13px;
+            box-shadow: 0 10px 20px rgba(0, 255, 204, 0.2);
+            transition: 0.3s;
+        }
+        .neon-btn:active { transform: scale(0.96); opacity: 0.9; }
+
+        .chip { 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid var(--border); 
+            padding: 12px; border-radius: 15px; 
+            font-size: 10px; font-weight: 700; 
+            text-transform: uppercase; text-align: center;
+        }
+        .chip.active { border-color: var(--neon); color: var(--neon); background: rgba(0, 255, 204, 0.05); }
+
+        .body-part { fill: rgba(255,255,255,0.08); stroke: rgba(255,255,255,0.2); transition: 0.4s; }
+        .body-part.selected { fill: rgba(0, 255, 204, 0.2); stroke: var(--neon); filter: drop-shadow(0 0 8px var(--neon)); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        input { background: rgba(255,255,255,0.03) !important; border: 1px solid var(--border) !important; border-radius: 12px; color: white; padding: 12px; text-align: center; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--neon) !important; background: rgba(0,255,204,0.05) !important; }
     </style>
 </head>
 <body>
 
-<div id="s0" class="screen active p-8 items-center justify-center">
-    <div class="w-24 h-24 mb-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-3xl ai-glow flex items-center justify-center text-4xl">🧠</div>
-    <h1 class="text-3xl font-black italic text-center mb-6 uppercase tracking-tighter">SmartBelly <span class="text-cyan-400">PRO AI</span></h1>
-    <div class="glass p-8 space-y-6 text-center">
-        <p class="text-[11px] font-bold text-cyan-400 uppercase tracking-widest">Экосистема Silverita Labs</p>
-        <p class="text-xs leading-relaxed text-gray-400">Добро пожаловать в будущее. Ваше приложение связано с мощнейшим ИИ-ядром, которое в реальном времени анализирует рынок продуктов Эстонии, состав ингредиентов по фото и ваши метаболические показатели 24/7.</p>
-        <div class="grid grid-cols-2 gap-4 pt-4">
-            <div class="text-[9px] uppercase border border-white/5 p-3 rounded-2xl">⚡ ИИ-Анализ <br> фото еды</div>
-            <div class="text-[9px] uppercase border border-white/5 p-3 rounded-2xl">🛒 Скидки <br> Maxima/Selver</div>
-        </div>
-        <button onclick="nav('s1')" class="neon-btn mt-6">Принять & Войти</button>
-    </div>
-</div>
-
-<div id="s1" class="screen p-8 items-center justify-center">
-    <div class="glass p-8 w-full max-w-sm">
-        <p class="text-[10px] text-center text-gray-500 mb-8 uppercase tracking-[4px]">System Language</p>
-        <div class="grid grid-cols-2 gap-4 mb-10">
-            <button onclick="setLang('RU', this)" class="chip active">Русский</button>
-            <button onclick="setLang('ET', this)" class="chip">Eesti</button>
-            <button onclick="setLang('EN', this)" class="chip">English</button>
-            <button onclick="setLang('FI', this)" class="chip">Suomi</button>
-        </div>
-        <button onclick="nav('s2')" id="btn-start" class="neon-btn">Далее</button>
-    </div>
-</div>
-
-<div id="s2" class="screen p-6">
-    <h2 class="text-3xl font-black mb-8 uppercase tracking-tighter">Ваш Профиль</h2>
-    <div class="glass p-8 space-y-8">
-        <div class="grid grid-cols-3 gap-4">
-            <div><label class="text-[8px] text-gray-500 uppercase">Лет</label><input type="number" id="age" placeholder="--" class="w-full bg-black/50 border border-gray-800 p-4 rounded-2xl mt-1 text-center outline-none focus:border-cyan-400 font-black"></div>
-            <div><label class="text-[8px] text-gray-500 uppercase">Рост</label><input type="number" id="height" placeholder="--" class="w-full bg-black/50 border border-gray-800 p-4 rounded-2xl mt-1 text-center outline-none focus:border-cyan-400 font-black"></div>
-            <div><label class="text-[8px] text-gray-500 uppercase">Вес</label><input type="number" id="weight" placeholder="--" class="w-full bg-black/50 border border-gray-800 p-4 rounded-2xl mt-1 text-center outline-none focus:border-cyan-400 font-black"></div>
-        </div>
-        <div>
-            <p class="text-[9px] text-cyan-400 font-black uppercase mb-4">Медицинский опрос:</p>
-            <div class="grid grid-cols-2 gap-2">
-                <div class="chip" onclick="this.classList.toggle('active')">Сахар/Сладости</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Алкоголь</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Травмы колен</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Диабет</div>
+<div id="s0" class="screen active justify-center">
+    <div class="glass-card p-8 text-center">
+        <div class="mb-6 flex flex-col items-center">
+            <div class="w-16 h-16 glass-card border-cyan-400/50 flex items-center justify-center mb-4">
+                <span class="text-3xl font-black italic">S<span class="text-cyan-400 text-2xl">L</span></span>
             </div>
-        </div>
-        <button onclick="nav('s3')" class="neon-btn">К выбору зон</button>
-    </div>
-</div>
-
-<div id="s3" class="screen items-center p-6">
-    <h2 class="text-2xl font-black mb-10 uppercase text-center tracking-widest">Зоны Коррекции</h2>
-    <svg width="220" height="380" viewBox="0 0 100 200">
-        <circle cx="50" cy="20" r="10" class="body-part" onclick="this.classList.toggle('selected')" />
-        <path id="p-chest" class="body-part" d="M30 40 L70 40 L85 85 L70 90 L65 55 L35 55 L30 90 L15 85 Z" onclick="this.classList.toggle('selected')" />
-        <path id="p-belly" class="body-part" d="M30 55 L70 55 L75 105 L25 105 Z" onclick="this.classList.toggle('selected')" />
-        <path id="p-legs" class="body-part" d="M25 105 L50 115 L75 105 L80 195 L60 195 L50 125 L40 195 L20 195 Z" onclick="this.classList.toggle('selected')" />
-    </svg>
-    <div class="grid grid-cols-2 gap-3 w-full mt-10">
-        <div class="chip" onclick="document.getElementById('p-belly').classList.toggle('selected')">Живот / Бока</div>
-        <div class="chip" onclick="document.getElementById('p-legs').classList.toggle('selected')">Ноги / Бедра</div>
-    </div>
-    <button onclick="nav('s4')" class="neon-btn mt-8">Далее</button>
-</div>
-
-<div id="s4" class="screen p-6">
-    <h2 class="text-2xl font-black mb-10 uppercase italic">Экосистема ГЕО</h2>
-    <div class="glass p-6 space-y-10">
-        <div>
-            <p class="text-[10px] text-cyan-400 font-bold mb-4 uppercase tracking-[3px]">Магазины:</p>
-            <div class="grid grid-cols-3 gap-2">
-                <div class="chip active">MAXIMA</div><div class="chip active">SELVER</div><div class="chip">RIMI</div>
-            </div>
-        </div>
-        <div>
-            <p class="text-[10px] text-cyan-400 font-bold mb-4 uppercase tracking-[3px]">Спорт-залы:</p>
-            <div class="grid grid-cols-2 gap-2">
-                <div class="chip active">MYFITNESS</div><div class="chip active">24/7 FITNESS</div>
-            </div>
-        </div>
-        <button onclick="startAnalysis()" class="neon-btn">Запустить ИИ-Анализ</button>
-    </div>
-</div>
-
-<div id="s5" class="screen items-center justify-center fixed inset-0 z-[9999] bg-[#05080f]">
-    <div class="w-32 h-32 border-8 border-cyan-400/10 border-t-cyan-400 rounded-full animate-spin"></div>
-    <div class="mt-12 text-center px-10">
-        <h3 id="ai-status" class="text-xl font-black uppercase tracking-[10px] animate-pulse">Neural Link...</h3>
-        <p class="text-[10px] text-gray-500 mt-4 uppercase leading-loose">ИИ Silverita анализирует ваш возраст и Гликемический индекс продуктов в Maxima...</p>
-    </div>
-</div>
-
-<div id="s6" class="screen items-center justify-center p-8">
-    <div class="glass p-10 w-full border-2 border-cyan-400 text-center">
-        <p class="text-[9px] text-gray-500 uppercase mb-4 tracking-[5px]">Upgrade to</p>
-        <h3 class="text-3xl font-black italic mb-10">PRO CLINIC</h3>
-        <div class="text-7xl font-black mb-12">9.99€</div>
-        <button onclick="nav('s7')" class="neon-btn mb-6">Оплатить Картой</button>
-        <button onclick="nav('s7')" class="text-xs text-yellow-500 font-bold uppercase tracking-widest">Pay with USDT (Secure)</button>
-    </div>
-</div>
-
-<div id="s7" class="screen p-0">
-    <header class="p-8 border-b border-white/5 bg-black/50 backdrop-blur sticky top-0 z-50">
-        <h1 class="text-2xl font-black italic text-cyan-400 tracking-tighter">SmartBelly Hub</h1>
-        <p class="text-[9px] text-gray-500 uppercase tracking-widest">Silverita AI Engine Active</p>
-    </header>
-    <div class="p-6 space-y-8">
-        <div class="glass p-6 border-l-4 border-magenta-400">
-            <div class="flex items-center gap-3 mb-3">
-                <span class="text-xl">🤖</span>
-                <span class="text-[10px] font-black uppercase tracking-widest text-magenta-400">Совет ИИ на сегодня:</span>
-            </div>
-            <p class="text-xs leading-relaxed text-gray-400 italic">"Учитывая ваш возраст (45+) и цель по <b>животу</b>, мы рекомендуем белковый рацион. Сегодня в Maxima филе индейки на 18% дешевле. Это даст вам энергию без скачков инсулина."</p>
-        </div>
-
-        <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
-            <div class="chip active min-w-[100px]">ДЕНЬ 1</div><div class="chip min-w-[100px]">ДЕНЬ 2</div><div class="chip min-w-[100px]">ДЕНЬ 3</div>
-        </div>
-
-        <div class="glass p-6" onclick="nav('s8')">
-            <div class="flex justify-between items-center mb-6">
-                <span class="text-[10px] font-black uppercase text-cyan-400">Ужин • Рекомендовано</span>
-                <span class="text-lg font-black tracking-tighter">540 kcal</span>
-            </div>
-            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600" class="w-full h-56 object-cover rounded-[30px] mb-6">
-            <h4 class="text-xl font-black uppercase">Филе индейки PRO</h4>
-            <div class="flex items-center justify-between mt-4">
-                <p class="text-[10px] text-gray-500 italic">Наличие: Maxima / Selver</p>
-                <span class="text-cyan-400 font-black">4.20€ →</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="s8" class="screen p-0">
-    <div class="h-96 relative">
-        <button onclick="nav('s7')" class="absolute top-10 left-6 z-[60] glass w-12 h-12 flex items-center justify-center">✕</button>
-        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800" class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-        <div class="absolute bottom-10 left-8 right-8">
-            <h2 class="text-4xl font-black uppercase leading-none mb-4">Индейка PRO</h2>
-            <div class="flex gap-4 text-[11px] font-black uppercase text-cyan-400">
-                <span>Белки 42г</span><span>Жиры 12г</span><span>Угл 5г</span>
-            </div>
-        </div>
-    </div>
-    <div class="p-8 space-y-10">
-        <div class="glass p-6 bg-cyan-400/5 border-dashed border-cyan-400/30 text-center">
-            <p class="text-[10px] font-black uppercase text-cyan-400 mb-4">Сфотографируйте ваши ингредиенты</p>
-            <button onclick="alert('ИИ активирует камеру... Анализ чека и состава...')" class="w-full py-4 bg-cyan-400 text-black rounded-2xl font-black uppercase text-[11px]">Сделать фото</button>
-        </div>
-
-        <div class="glass p-6 space-y-6">
-            <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest">Точный состав:</h3>
-            <ul class="space-y-4 text-sm font-bold">
-                <li class="flex justify-between border-b border-white/5 pb-2"><span>Филе (Maxima)</span><span class="text-cyan-400">400г</span></li>
-                <li class="flex justify-between border-b border-white/5 pb-2"><span>Авокадо</span><span class="text-cyan-400">150г</span></li>
-            </ul>
+            <p class="text-[9px] tracking-[6px] text-gray-400 uppercase">Silverita Labs OÜ</p>
         </div>
         
-        <div class="glass p-6 border-l-4 border-cyan-400">
-            <p class="text-xs text-gray-400 leading-relaxed uppercase tracking-tighter">"Этот рацион снижает висцеральный жир на 0.5% в неделю при вашем ИМТ. Приготовьте в течение 7 минут."</p>
-            <button onclick="startT(420, this)" class="mt-6 text-[10px] font-black uppercase tracking-widest text-magenta-400 border border-magenta-400/20 px-6 py-3 rounded-full">Запустить таймер</button>
-        </div>
+        <h1 class="text-2xl font-black uppercase tracking-tighter mb-4">SmartBelly <span class="neon-text font-light">Pro</span></h1>
+        <p class="text-xs text-gray-400 leading-relaxed mb-10 px-4">
+            Добро пожаловать в персональную экосистему здоровья. Мы используем ИИ для анализа каждого вашего приема пищи в реальном времени.
+        </p>
+        
+        <button onclick="nav('s1')" class="neon-btn w-full">Начать Анализ</button>
     </div>
 </div>
 
-<div id="s9" class="screen p-8">
-    <h2 class="text-3xl font-black mb-10 uppercase italic">Настройки AI</h2>
-    <div class="glass p-8 space-y-10">
-        <div>
-            <label class="text-[9px] text-gray-500 uppercase tracking-[4px]">Моя цель:</label>
-            <input type="text" value="Сброс веса (45 лет)" class="w-full bg-black/40 border-b border-gray-800 p-4 mt-2 text-cyan-400 font-bold outline-none">
+<div id="s1" class="screen">
+    <div class="glass-card p-8">
+        <h2 class="text-xl font-black uppercase mb-8 italic">Metrics</h2>
+        <div class="grid grid-cols-3 gap-3 mb-10">
+            <div><p class="text-[9px] text-gray-500 uppercase mb-2">Возраст</p><input type="number" id="age" placeholder="0"></div>
+            <div><p class="text-[9px] text-gray-500 uppercase mb-2">Рост</p><input type="number" id="height" placeholder="0"></div>
+            <div><p class="text-[9px] text-gray-500 uppercase mb-2">Вес</p><input type="number" id="weight" placeholder="0"></div>
         </div>
+        
+        <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-4">Ограничения:</p>
+        <div class="grid grid-cols-2 gap-3 mb-10">
+            <div class="chip" onclick="this.classList.toggle('active')">Сахар</div>
+            <div class="chip" onclick="this.classList.toggle('active')">Алкоголь</div>
+            <div class="chip" onclick="this.classList.toggle('active')">Травмы</div>
+            <div class="chip" onclick="this.classList.toggle('active')">Диабет</div>
+        </div>
+        <button onclick="nav('s2')" class="neon-btn w-full">Далее</button>
+    </div>
+</div>
+
+<div id="s2" class="screen items-center">
+    <div class="glass-card p-8 w-full flex flex-col items-center">
+        <h2 class="text-sm font-black uppercase tracking-[5px] mb-8">Target Area</h2>
+        <svg width="220" height="380" viewBox="0 0 100 220">
+            <path class="body-part" d="M50 5 Q55 5 58 10 Q60 18 50 25 Q40 18 42 10 Q45 5 50 5 Z" /> <path id="torso" class="body-part" d="M35 30 Q50 25 65 30 L72 65 Q50 68 28 65 Z" onclick="this.classList.toggle('selected')" />
+            <path id="belly" class="body-part" d="M28 65 Q50 68 72 65 L70 100 Q50 110 30 100 Z" onclick="this.classList.toggle('selected')" />
+            <path id="legs" class="body-part" d="M30 100 Q50 110 70 100 L75 210 L55 210 L50 130 L45 210 L25 210 Z" onclick="this.classList.toggle('selected')" />
+        </svg>
+        <div class="grid grid-cols-2 gap-3 w-full mt-10">
+            <div class="chip" onclick="document.getElementById('belly').classList.toggle('selected')">Живот / Бока</div>
+            <div class="chip" onclick="document.getElementById('legs').classList.toggle('selected')">Нижняя часть</div>
+        </div>
+        <button onclick="nav('s3')" class="neon-btn w-full mt-10">Анализ ГЕО</button>
+    </div>
+</div>
+
+<div id="s3" class="screen">
+    <div class="glass-card p-8 space-y-8">
+        <h2 class="text-xl font-black uppercase mb-4 italic">Ecosystem</h2>
         <div>
-            <label class="text-[9px] text-gray-500 uppercase tracking-[4px]">Активные API:</label>
-            <div class="flex flex-wrap gap-3 mt-4">
-                <div class="chip active">Maxima Retail</div><div class="chip active">Health Connect</div>
+            <p class="text-[9px] uppercase text-gray-500 mb-4 tracking-widest">Магазины (Парсинг цен):</p>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="chip active">Maxima</div><div class="chip active">Selver</div><div class="chip">Prisma</div>
+                <div class="chip active">Rimi</div><div class="chip">Grossi</div><div class="chip">Coop</div>
             </div>
         </div>
-        <button class="w-full py-5 border border-red-900/30 text-red-900 rounded-full font-black uppercase text-[10px] tracking-widest">Сбросить обучение ИИ</button>
+        <div>
+            <p class="text-[9px] uppercase text-gray-500 mb-4 tracking-widest">Место тренировок:</p>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="chip active">Дом</div><div class="chip">Зал</div><div class="chip">Парк</div>
+            </div>
+        </div>
+        <button onclick="startAnalysis()" class="neon-btn w-full mt-4">Создать мой план</button>
     </div>
 </div>
 
-<div id="tbar" class="tab-bar">
-    <button onclick="nav('s7')" class="text-2xl">🏠</button>
-    <button onclick="nav('s8')" class="text-2xl">🥗</button>
-    <button onclick="nav('s9')" class="text-2xl">⚙️</button>
+<div id="s4" class="screen">
+    <div class="glass-card p-8">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-black">PRO PLAN</h3>
+            <span class="text-[10px] neon-text font-black uppercase">Active</span>
+        </div>
+        <p class="text-[11px] text-gray-400 mb-8 leading-relaxed uppercase tracking-tighter">
+            Мы проанализировали ваш возраст, индекс массы тела и цены в магазинах. План включает:
+        </p>
+        <div class="space-y-4 mb-10">
+            <div class="flex items-center gap-3 text-[10px] font-bold"><span class="text-cyan-400">●</span> ИИ-АНАЛИЗ СОСТАВА ПО ФОТО</div>
+            <div class="flex items-center gap-3 text-[10px] font-bold"><span class="text-cyan-400">●</span> ЕЖЕДНЕВНЫЙ СПИСОК ПОКУПОК</div>
+            <div class="flex items-center gap-3 text-[10px] font-bold"><span class="text-cyan-400">●</span> КОРРЕКЦИЯ МЕНЮ 24/7</div>
+        </div>
+        <div class="text-center mb-8">
+            <span class="text-5xl font-black">9.99€</span>
+            <p class="text-[10px] text-gray-500 mt-2">Единоразовый доступ на месяц</p>
+        </div>
+        <button onclick="nav('s5')" class="neon-btn w-full">Открыть доступ</button>
+    </div>
+</div>
+
+<div id="s5" class="screen p-0">
+    <div class="p-8 flex justify-between items-center">
+        <h1 class="text-xl font-black tracking-tighter italic">SmartBelly Hub</h1>
+        <button onclick="nav('s6')" class="w-10 h-10 glass-card flex items-center justify-center">⚙️</button>
+    </div>
+    
+    <div class="p-6 space-y-6">
+        <div class="glass-card p-6 border-l-2 border-cyan-400">
+            <p class="text-[10px] neon-text font-black uppercase mb-2">ИИ-Совет на сегодня:</p>
+            <p class="text-xs italic text-gray-400 leading-relaxed">"Для сжигания висцерального жира сегодня рекомендуем индейку. В Maxima скидка 15%. Сфотографируйте тарелку перед едой."</p>
+        </div>
+        
+        <button onclick="triggerPhoto()" class="w-full py-5 glass-card border-dashed border-cyan-400/40 neon-text font-black uppercase text-xs">
+            📸 Сделать фото для анализа
+        </button>
+
+        <div class="glass-card p-4 relative overflow-hidden h-48">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600" class="w-full h-full object-cover opacity-60 rounded-2xl">
+            <div class="absolute bottom-4 left-4">
+                <p class="text-sm font-black uppercase">Ужин: Индейка PRO</p>
+                <p class="text-[10px] text-cyan-400">540 ккал • 4.20€</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="s6" class="screen">
+    <div class="glass-card p-8">
+        <h2 class="text-xl font-black uppercase mb-10 italic">Настройки</h2>
+        <button onclick="resetApp()" class="w-full py-5 bg-red-900/10 border border-red-500/30 text-red-500 font-black rounded-2xl uppercase text-[10px] tracking-widest">
+            Сбросить все данные
+        </button>
+        <button onclick="nav('s5')" class="w-full py-5 glass-card mt-4 text-[10px] font-black uppercase">Назад в Хаб</button>
+    </div>
 </div>
 
 <script>
     function nav(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        const bar = document.getElementById('tbar');
-        if(['s7', 's8', 's9'].includes(id)) bar.classList.add('visible');
-        else bar.classList.remove('visible');
         window.scrollTo(0,0);
     }
-
-    function setLang(lang, el) {
-        document.querySelectorAll('#s1 .chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        const b = document.getElementById('btn-start');
-        const t = {'RU':'Начать','ET':'Alusta','EN':'Start','FI':'Aloita'};
-        b.innerText = t[lang];
-    }
-
     function startAnalysis() {
-        nav('s5');
-        const s = document.getElementById('ai-status');
-        setTimeout(() => s.innerText = "Parsing Maxima...", 800);
-        setTimeout(() => s.innerText = "Vision Engine...", 1600);
-        setTimeout(() => nav('s6'), 2500);
+        nav('s4');
     }
-
-    function startT(sec, btn) {
-        let t = sec;
-        const i = setInterval(() => {
-            let m = Math.floor(t/60), s = t%60;
-            btn.innerText = `${m}:${s<10?'0':''}${s}`;
-            if(--t < 0) { clearInterval(i); btn.innerText = "DONE!"; }
-        }, 1000);
+    function triggerPhoto() {
+        alert("ИИ активирует камеру... Анализ чека и состава тарелки...");
+    }
+    function resetApp() {
+        if(confirm("Вы уверены? Система Silverita забудет все ваши показатели.")) {
+            localStorage.clear();
+            location.reload();
+        }
     }
 </script>
 </body>
