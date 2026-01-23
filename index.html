@@ -3,129 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBelly PRO Full | Silverita Labs OÜ</title>
+    <title>SmartBelly PRO | Silverita Labs OÜ</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --bg: #05080f; --cyan: #00ffcc; --magenta: #ff00ff; --yellow: #fbff00; }
-        body { background: var(--bg); color: #e6edf3; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(13, 17, 23, 0.9); border: 1px solid #30363d; border-radius: 24px; backdrop-filter: blur(10px); }
-        .screen { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
-        .screen.active { display: block; }
-        .btn-action { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 12px; border-radius: 15px; font-weight: bold; width: 100%; transition: 0.3s; }
-        .btn-action:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
-        .step-img { width: 100%; height: 160px; background: #1a2230; border-radius: 15px; object-fit: cover; margin-bottom: 10px; border: 1px solid #333; }
-        
-        /* Анимация пульсации для ИИ-сканера */
-        .scan-line { width: 100%; height: 2px; background: var(--cyan); position: absolute; top: 0; animation: scan 2s infinite linear; box-shadow: 0 0 15px var(--cyan); }
-        @keyframes scan { from { top: 0; } to { top: 100%; } }
+        :root { --bg: #0b0e14; --cyan: #00ffcc; --dark-glass: rgba(17, 25, 40, 0.75); }
+        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; }
+        .screen { display: none; min-height: 100vh; animation: fadeIn 0.4s ease; }
+        .screen.active { display: flex; flex-direction: column; }
+        .glass-card { background: var(--dark-glass); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; backdrop-filter: blur(12px); }
+        .neon-btn { background: transparent; border: 2px solid var(--cyan); color: var(--cyan); border-radius: 50px; padding: 16px; font-weight: 700; transition: 0.3s; text-transform: uppercase; text-align: center; }
+        .neon-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .scan-anim { height: 2px; background: var(--cyan); position: absolute; width: 100%; top: 0; animation: scan 2s infinite linear; box-shadow: 0 0 10px var(--cyan); }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
     </style>
 </head>
 <body>
 
-<div class="fixed top-0 left-0 w-full p-4 z-50 flex justify-between items-center bg-[#05080f]/90 border-b border-gray-800">
-    <div>
-        <h1 class="text-sm font-black tracking-tighter">SmartBelly <span class="text-cyan-400">PRO</span></h1>
-        <p class="text-[7px] text-gray-500 uppercase tracking-widest">Silverita Labs OÜ</p>
+<div id="step1" class="screen active p-6 items-center justify-center text-center">
+    <div class="mb-10">
+        <h1 class="text-3xl font-black mb-1">SmartBelly <span class="text-cyan-400">PRO</span></h1>
+        <p class="text-[8px] tracking-[4px] text-gray-500">SILVERITA LABS OÜ</p>
+    </div>
+    <div class="glass-card p-8 w-full max-w-sm">
+        <p class="mb-6 text-sm">Select System Language / Выберите язык</p>
+        <div class="grid grid-cols-2 gap-4">
+            <button onclick="nav('step2')" class="neon-btn text-xs">English</button>
+            <button onclick="nav('step2')" class="neon-btn text-xs">Русский</button>
+        </div>
+    </div>
+    <p class="mt-10 text-[10px] text-gray-600 italic">Precision Medical Logic v2.5</p>
+</div>
+
+<div id="step2" class="screen p-6">
+    <div class="flex justify-between items-center mb-10">
+        <button onclick="nav('step1')" class="text-xs text-gray-500">← НАЗАД</button>
+        <div id="region-tag" class="bg-cyan-900/30 text-cyan-400 px-3 py-1 rounded-full text-[10px] border border-cyan-500/30">📍 Detecting region...</div>
+    </div>
+    <h2 class="text-2xl font-bold mb-6 text-center">Ваши данные</h2>
+    <div class="glass-card p-6 space-y-4">
+        <div>
+            <label class="text-[10px] text-gray-400 uppercase">Возраст</label>
+            <input type="number" value="45" class="w-full bg-black/50 border border-gray-700 p-3 rounded-xl mt-1">
+        </div>
+        <div>
+            <label class="text-[10px] text-gray-400 uppercase">Вес (кг)</label>
+            <input type="number" value="78" class="w-full bg-black/50 border border-gray-700 p-3 rounded-xl mt-1">
+        </div>
+        <div>
+            <label class="text-[10px] text-gray-400 uppercase">Ваша цель</label>
+            <select class="w-full bg-black/50 border border-gray-700 p-3 rounded-xl mt-1">
+                <option>Набор массы</option>
+                <option>Сброс веса</option>
+            </select>
+        </div>
+        <button onclick="nav('step3')" class="neon-btn w-full mt-4">Продолжить</button>
+    </div>
+</div>
+
+<div id="step3" class="screen p-6 items-center">
+    <h2 class="text-2xl font-bold mb-8">Тарифы</h2>
+    <div class="glass-card p-6 w-full max-w-sm border-2 border-cyan-400 relative">
+        <h3 class="text-cyan-400 font-bold text-lg">PRO AI CLINIC</h3>
+        <p class="text-[10px] text-gray-400 mb-4 italic">Smart Fridge Sync + Health Tracker</p>
+        <div class="text-3xl font-black mb-6">9.99€ <span class="text-sm font-light">/ mo</span></div>
+        <button onclick="nav('step4')" class="neon-btn w-full mb-4">Оплатить картой</button>
+        <button onclick="nav('step4')" class="w-full text-[10px] text-yellow-500 border border-yellow-500/30 py-2 rounded-xl">Оплатить криптой (USDT/BTC)</button>
     </div>
     
-    <div class="flex items-center gap-2">
-        <span id="voice-status" class="text-[9px] text-gray-500 uppercase">Voice Off</span>
-        <button onclick="toggleVoice()" id="voice-toggle" class="w-12 h-6 bg-gray-800 rounded-full relative border border-gray-600 transition-all">
-            <div id="voice-circle" class="w-4 h-4 bg-gray-400 rounded-full absolute top-1 left-1 transition-all"></div>
-        </button>
-    </div>
-</div>
-
-<div id="scr-main" class="screen active pt-20">
-    <div class="glass p-4 mb-4 relative overflow-hidden">
-        <p class="text-[10px] text-cyan-400 font-bold mb-2 uppercase tracking-tighter italic">AI Vision Scanner</p>
-        <div class="relative w-full h-40 bg-black rounded-xl border border-gray-800 flex items-center justify-center overflow-hidden">
-            <div class="scan-line"></div>
-            <p class="text-[10px] text-gray-500">Наведите камеру на продукт...</p>
-        </div>
-        <button class="mt-3 btn-action text-xs" onclick="alert('ИИ Анализ: Куриная грудка (свежая), 110 ккал/100г. Подходит для вашего плана!')">Сканировать блюдо</button>
-    </div>
-
-    <div class="glass p-4 mb-20">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-sm font-bold uppercase tracking-widest">Меню: Обед (День 1)</h3>
-            <span class="text-[10px] text-magenta-400 font-bold">540 kcal</span>
-        </div>
-        
-        <div class="mb-6">
-            <img src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=500&q=60" class="step-img" alt="Step 1">
-            <p class="text-[11px] leading-relaxed"><span class="text-cyan-400 font-bold">ШАГ 1:</span> Нарежьте куриное филе кубиками. Используйте <b>Maxima</b> (сегодня там скидка на филе - 4.20€).</p>
-        </div>
-
-        <div class="mb-6">
-            <img src="https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=500&q=60" class="step-img" alt="Step 2">
-            <p class="text-[11px] leading-relaxed"><span class="text-cyan-400 font-bold">ШАГ 2:</span> Добавьте свежий шпинат и немного оливкового масла. Это поможет в работе с вашей целью (Зона: Живот).</p>
+    <div class="mt-8 w-full max-w-sm glass-card p-4">
+        <p class="text-[10px] text-gray-500 uppercase mb-3">Рядом с вами:</p>
+        <div class="space-y-2 text-xs">
+            <div class="flex justify-between border-b border-gray-800 pb-1"><span>Ближайшая Maxima</span><span>→</span></div>
+            <div class="flex justify-between border-b border-gray-800 pb-1"><span>Grossi (Дешевле)</span><span>→</span></div>
         </div>
     </div>
 </div>
 
-<div class="fixed bottom-0 left-0 w-full p-4 bg-[#05080f]/95 border-t border-gray-800 flex justify-around items-center z-50">
-    <button class="text-xs text-cyan-400 font-bold" onclick="showNotification('Пора пить воду!')">🔔 Вода</button>
-    <button class="text-xs text-gray-500 uppercase" onclick="nav('scr-main')">Главная</button>
-    <button class="text-xs text-gray-500 uppercase" onclick="alert('Напоминание установлено: Ужин в 19:00')">⏲️ Таймер</button>
-</div>
+<div id="step4" class="screen">
+    <div class="p-4 flex justify-between items-center bg-black/50 sticky top-0 z-50 border-b border-gray-800">
+        <h4 class="text-[10px] font-bold tracking-widest uppercase">Мониторинг</h4>
+        <div class="flex items-center gap-2">
+            <span class="text-[9px] text-gray-500">VOICE ON</span>
+            <input type="checkbox" checked class="accent-cyan-400">
+        </div>
+    </div>
 
-<div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 glass px-6 py-3 border-cyan-400 hidden z-[100] transition-all">
-    <p id="toast-text" class="text-xs text-white font-bold"></p>
+    <div class="p-4 space-y-4 pb-24">
+        <div class="glass-card p-4 relative overflow-hidden">
+            <div class="h-32 bg-black rounded-xl border border-gray-800 flex items-center justify-center relative">
+                <div class="scan-anim"></div>
+                <p class="text-[10px] text-gray-600">Наведите камеру на продукт...</p>
+            </div>
+            <button class="neon-btn w-full mt-3 py-2 text-xs">Сканировать блюдо</button>
+        </div>
+
+        <div class="glass-card p-4">
+            <canvas id="weightChart" height="150"></canvas>
+            <div class="flex justify-between mt-4 text-center">
+                <div><p class="text-[9px] text-gray-500">BMI</p><p class="font-bold">25.5</p></div>
+                <div><p class="text-[9px] text-gray-500">КВОТА КАЛОРИЙ</p><p class="font-bold text-cyan-400">2586 KCAL</p></div>
+            </div>
+        </div>
+
+        <div class="glass-card p-4">
+            <h3 class="text-xs font-bold mb-4 uppercase italic">Меню: Обед (День 1) - 540 kcal</h3>
+            <img src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=500&q=60" class="w-full h-32 object-cover rounded-xl mb-3">
+            <p class="text-[11px]"><span class="text-cyan-400 font-bold">ШАГ 1:</span> Используйте <b>Maxima</b> (скидка на филе - 4.20€).</p>
+        </div>
+    </div>
+
+    <div class="fixed bottom-0 w-full p-4 glass-card rounded-none border-t border-gray-800 flex justify-around text-[10px] font-bold">
+        <button class="text-yellow-400">🔔 ВОДА</button>
+        <button onclick="nav('step1')">ГЛАВНАЯ</button>
+        <button>⏲️ ТАЙМЕР</button>
+    </div>
 </div>
 
 <script>
-    let voiceActive = false;
-
-    // 1. ГОЛОСОВОЙ ПОМОЩНИК
-    function toggleVoice() {
-        voiceActive = !voiceActive;
-        const circle = document.getElementById('voice-circle');
-        const status = document.getElementById('voice-status');
-        const toggle = document.getElementById('voice-toggle');
-
-        if(voiceActive) {
-            circle.style.left = '26px';
-            circle.style.backgroundColor = '#00ffcc';
-            status.innerText = 'Voice On';
-            status.classList.add('text-cyan-400');
-            speak("Голосовой помощник SmartBelly активирован. Чем я могу помочь?");
-        } else {
-            circle.style.left = '4px';
-            circle.style.backgroundColor = '#666';
-            status.innerText = 'Voice Off';
-            status.classList.remove('text-cyan-400');
-        }
-    }
-
-    function speak(text) {
-        if (!voiceActive) return;
-        const msg = new SpeechSynthesisUtterance();
-        msg.text = text;
-        msg.lang = 'ru-RU';
-        window.speechSynthesis.speak(msg);
-    }
-
-    // 2. УМНЫЕ НАПОМИНАНИЯ (TOAST)
-    function showNotification(text) {
-        const toast = document.getElementById('toast');
-        document.getElementById('toast-text').innerText = text;
-        toast.classList.remove('hidden');
-        speak(text); // Помощник озвучивает напоминание
-        setTimeout(() => toast.classList.add('hidden'), 3000);
-    }
-
-    // 3. ИМИТАЦИЯ НАПОМИНАНИЙ
-    setInterval(() => {
-        const hours = new Date().getHours();
-        if (hours === 13) showNotification("Время обеда! Ваша курица с шпинатом ждет.");
-    }, 600000); // Проверка каждые 10 минут
-
     function nav(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        if(id === 'step4') initChart();
     }
+
+    function initChart() {
+        const ctx = document.getElementById('weightChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Today'],
+                datasets: [{
+                    data: [82, 80, 79, 78],
+                    borderColor: '#00ffcc',
+                    tension: 0.4,
+                    fill: false,
+                    pointBackgroundColor: '#00ffcc'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#666', font: { size: 9 } } } }
+            }
+        });
+    }
+
+    // Имитация гео-определения
+    setTimeout(() => {
+        document.getElementById('region-tag').innerText = "📍 Region: Estonia";
+    }, 1500);
 </script>
 </body>
 </html>
