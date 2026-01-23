@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,191 +7,217 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --bg: #0b101a; --cyan: #00ffcc; --magenta: #ff00ff; --green: #39ff14; }
-        body { background: var(--bg); color: #e6edf3; font-family: 'Segoe UI', sans-serif; min-height: 100vh; overflow: hidden; }
+        body { background: var(--bg); color: #e6edf3; font-family: 'Segoe UI', sans-serif; min-height: 100vh; overflow-x: hidden; margin: 0; }
         
-        .screen { display: none; height: 100vh; padding: 25px; overflow-y: auto; transition: 0.5s; }
-        .screen.active { display: flex; flex-direction: column; animation: slideIn 0.4s ease-out; }
-        
-        @keyframes slideIn { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        /* Анимированный фон с плавающими точками */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
-        .glass { background: rgba(22, 27, 34, 0.7); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; backdrop-filter: blur(15px); padding: 20px; }
-        .btn-neon { border: 1px solid var(--cyan); color: var(--cyan); border-radius: 30px; padding: 15px; width: 100%; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.3s; text-align: center; }
+        .screen { display: none; padding: 25px; min-height: 100vh; animation: fadeIn 0.4s ease; }
+        .screen.active { display: flex; flex-direction: column; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+        .glass { background: rgba(22, 27, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; backdrop-filter: blur(15px); padding: 25px; }
+        .btn-neon { border: 1px solid var(--cyan); color: var(--cyan); border-radius: 30px; padding: 15px; width: 100%; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.3s; text-align: center; background: transparent; }
         .btn-neon:hover { background: var(--cyan); color: black; box-shadow: 0 0 20px var(--cyan); }
         
-        .option-card { background: #161b22; border: 1px solid #30363d; border-radius: 15px; padding: 15px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
-        .option-card.selected { border-color: var(--cyan); background: rgba(0, 255, 204, 0.05); }
+        .lang-btn { padding: 10px; border: 1px solid #30363d; border-radius: 12px; cursor: pointer; transition: 0.2s; background: #161b22; }
+        .lang-btn.active { border-color: var(--cyan); color: var(--cyan); }
 
-        input { background: #0d1117; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 12px; width: 100%; outline: none; text-align: center; font-size: 1.1rem; }
-        video { width: 100%; border-radius: 20px; border: 2px solid var(--cyan); margin-bottom: 15px; display: none; }
-        .wave-path { filter: drop-shadow(0 0 5px var(--cyan)); }
+        .market-opt { background: #161b22; border: 1px solid #30363d; border-radius: 15px; padding: 15px; cursor: pointer; text-align: center; }
+        .market-opt.active { border-color: var(--cyan); background: rgba(0, 255, 204, 0.05); }
+
+        input, select { background: #0d1117; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 12px; width: 100%; outline: none; text-align: center; }
+        .wave-path { filter: drop-shadow(0 0 8px var(--cyan)); transition: 0.5s; }
+        
+        /* Логотип Silverita Labs */
+        .logo-box { width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, #fff, #888); border-radius: 20%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: black; font-size: 2rem; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
 
-    <div id="scr-intro" class="screen active justify-center">
-        <div class="text-center">
-            <h1 class="text-4xl font-bold tracking-tighter mb-2">SmartBelly PRO</h1>
-            <p class="text-gray-500 text-[10px] tracking-[5px] mb-12 uppercase">Silverita Labs OÜ</p>
-            <div class="glass p-8 mb-10">
-                <p class="mb-6 text-sm text-gray-300">Select System Language / Выберите язык</p>
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="setLang('en')" class="btn-neon text-xs">English</button>
-                    <button onclick="setLang('ru')" class="btn-neon text-xs">Русский</button>
-                </div>
+    <canvas id="bg-canvas"></canvas>
+
+    <div id="scr-intro" class="screen active justify-center items-center">
+        <div class="logo-box">SB</div>
+        <h1 class="text-4xl font-bold tracking-tighter mb-2 text-center">SmartBelly PRO</h1>
+        <p class="text-gray-500 text-[10px] tracking-[5px] mb-6 uppercase text-center">Silverita Labs OÜ</p>
+        
+        <div class="glass max-w-sm w-full text-center">
+            <p id="t-intro-desc" class="text-xs text-gray-400 mb-8 leading-relaxed">
+                Precision biometric analysis and dietary intelligence system for clinical metabolic optimization.
+            </p>
+            
+            <div class="grid grid-cols-3 gap-2 mb-8">
+                <div onclick="changeLang('en')" id="l-en" class="lang-btn active text-[10px]">EN</div>
+                <div onclick="changeLang('ru')" id="l-ru" class="lang-btn text-[10px]">RU</div>
+                <div onclick="changeLang('et')" id="l-et" class="lang-btn text-[10px]">ET</div>
             </div>
-            <p class="text-[9px] text-gray-600 uppercase italic">Precision Medical Logic v2.5</p>
+            
+            <button onclick="showScreen('scr-onboarding')" id="t-start-btn" class="btn-neon">Start Analysis</button>
         </div>
+        <p class="text-[9px] text-gray-600 mt-10 uppercase italic">Precision Medical Logic v2.5</p>
     </div>
 
     <div id="scr-onboarding" class="screen">
-        <h2 class="text-xl font-bold mb-6 text-cyan-400">Personalization</h2>
-        <div class="glass space-y-6">
-            <div>
-                <label class="text-[10px] text-gray-500 uppercase ml-2">Preferred Market (Estonia)</label>
-                <div class="flex gap-2 mt-2">
-                    <div id="m-maxima" class="option-card flex-1 text-center" onclick="setMarket('Maxima')">MAXIMA</div>
-                    <div id="m-grossi" class="option-card flex-1 text-center" onclick="setMarket('Grossi')">GROSSI</div>
+        <div class="max-w-md mx-auto w-full">
+            <h2 id="t-pers-title" class="text-2xl font-bold mb-8 text-cyan-400">Personalization</h2>
+            
+            <div class="glass space-y-6">
+                <div>
+                    <label id="t-market-label" class="text-[10px] text-gray-500 uppercase ml-2">Preferred Market (Estonia)</label>
+                    <div class="flex gap-4 mt-2">
+                        <div id="m-maxima" class="market-opt flex-1 active" onclick="setMarket('Maxima')">MAXIMA</div>
+                        <div id="m-grossi" class="market-opt flex-1" onclick="setMarket('Grossi')">GROSSI</div>
+                    </div>
                 </div>
+                
+                <div>
+                    <label id="t-goal-label" class="text-[10px] text-gray-500 uppercase ml-2">Dietary Goal</label>
+                    <select id="goal" class="mt-2">
+                        <option value="loss" id="t-opt-loss">Weight Loss</option>
+                        <option value="health" id="t-opt-health">Metabolic Health</option>
+                        <option value="gain" id="t-opt-gain">Muscle Gain</option>
+                    </select>
+                </div>
+
+                <button onclick="showScreen('scr-monitor')" id="t-cont-btn" class="btn-neon mt-4">Continue</button>
             </div>
-            <div>
-                <label class="text-[10px] text-gray-500 uppercase ml-2">Dietary Goal</label>
-                <select id="goal" class="w-full bg-[#0d1117] border border-gray-800 p-3 rounded-xl mt-2 outline-none">
-                    <option value="weight_loss">Weight Loss</option>
-                    <option value="metabolic">Metabolic Health</option>
-                    <option value="muscle">Muscle Gain</option>
-                </select>
-            </div>
-            <button onclick="showScreen('scr-scan')" class="btn-neon mt-4">Continue</button>
         </div>
     </div>
 
-    <div id="scr-scan" class="screen">
-        <div class="flex justify-between items-center mb-4">
-            <span class="text-[10px] text-cyan-400 uppercase tracking-widest">Medical Monitor</span>
-            <span id="live-bmi" class="text-magenta-400 font-bold">BMI: --</span>
-        </div>
-        
-        <svg class="w-full h-24 mb-6" viewBox="0 0 400 100">
-            <path id="wave" class="wave-path" d="M0,50 Q100,50 200,50 T400,50" fill="none" stroke="#00ffcc" stroke-width="3" />
-        </svg>
-
-        <div class="glass mb-6 text-center">
-            <video id="webcam" autoplay playsinline></video>
-            <button id="snap-btn" onclick="toggleCamera()" class="btn-neon mb-4">📸 Start AI Scanner</button>
-            <div class="grid grid-cols-2 gap-4">
-                <input type="number" id="h" placeholder="Height" value="175" oninput="calc()">
-                <input type="number" id="w" placeholder="Weight" value="75" oninput="calc()">
+    <div id="scr-monitor" class="screen">
+        <div class="max-w-md mx-auto w-full">
+            <div class="flex justify-between items-center mb-4">
+                <span id="t-monitor-status" class="text-[10px] text-cyan-400 uppercase tracking-widest">Medical Monitor</span>
+                <button onclick="showScreen('scr-intro')" class="text-[10px] text-gray-500">⚙ SETTINGS</button>
             </div>
-        </div>
 
-        <div class="flex justify-between mb-8 px-2">
-            <div class="text-left">
-                <p class="text-[8px] text-gray-500 uppercase">Status</p>
-                <p id="status" class="font-bold text-xl uppercase">---</p>
-            </div>
-            <div class="text-right">
-                <p class="text-[8px] text-gray-500 uppercase">Daily Budget</p>
-                <p id="kcal" class="font-bold text-xl text-cyan-400">--- KCAL</p>
-            </div>
-        </div>
+            <svg class="w-full h-24 mb-6" viewBox="0 0 400 100">
+                <path id="wave" class="wave-path" d="M0,50 Q100,50 200,50 T400,50" fill="none" stroke="#00ffcc" stroke-width="3" />
+            </svg>
 
-        <button onclick="showScreen('scr-pricing')" class="btn-neon" style="border-color: var(--magenta); color: var(--magenta);">Finalize & Select Plan</button>
-    </div>
-
-    <div id="scr-pricing" class="screen">
-        <button onclick="showScreen('scr-scan')" class="text-gray-600 mb-6">← Back</button>
-        <h2 class="text-2xl font-bold mb-1">Select Access Plan</h2>
-        <p class="text-gray-500 text-[10px] uppercase mb-8">Silverita Labs Premium Infrastructure</p>
-
-        <div class="space-y-4">
-            <div class="glass border-gray-800" onclick="selectPlan(this)">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 class="font-bold">Basic Logic</h3>
-                        <p class="text-[9px] text-gray-500">Essential monitoring</p>
-                    </div>
-                    <span class="text-xl font-bold">Free</span>
+            <div class="glass mb-8">
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <input type="number" id="h" value="175" oninput="calc()">
+                    <input type="number" id="w" value="75" oninput="calc()">
                 </div>
-                <ul class="text-[9px] text-gray-400 space-y-1">
-                    <li>• Manual data entry</li>
-                    <li>• Basic BMI calculation</li>
-                </ul>
+                <div class="flex justify-between items-end px-2">
+                    <div>
+                        <p id="t-status-label" class="text-[8px] text-gray-500 uppercase">Analysis</p>
+                        <p id="status" class="font-bold text-xl uppercase text-green-400">Normal</p>
+                    </div>
+                    <div class="text-right">
+                        <p id="t-kcal-label" class="text-[8px] text-gray-500 uppercase">Dietary Quota</p>
+                        <p id="kcal" class="font-bold text-2xl text-cyan-400">2633 KCAL</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="glass border-magenta-500/50 relative overflow-hidden" onclick="selectPlan(this)">
-                <div class="absolute top-0 right-0 bg-magenta-500 text-[7px] px-2 py-1 text-white font-bold uppercase">Popular</div>
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 class="font-bold text-magenta-400">SmartBelly PRO</h3>
-                        <p class="text-[9px] text-gray-500">v2.5 Full Medical Access</p>
-                    </div>
-                    <span class="text-xl font-bold">€9.99<span class="text-[10px]">/mo</span></span>
-                </div>
-                <ul class="text-[9px] text-gray-400 space-y-1">
-                    <li>• AI Optical Scanning (Camera)</li>
-                    <li>• Real-time CGM & Watch Sync</li>
-                    <li>• Market Prices (Maxima/Grossi)</li>
-                    <li>• Personalized Doctor's Menu</li>
-                </ul>
+            <button onclick="alert('AI Processing...')" id="t-ai-btn" class="btn-neon mb-4">Run AI Scan</button>
+            <div class="text-center text-[10px] text-gray-600 tracking-widest">
+                SILVERITA LABS OÜ | PRECISION MEDICAL LOGIC
             </div>
         </div>
-
-        <button onclick="checkout()" class="btn-neon mt-10" style="background:var(--magenta); color:white; border:none;">Activate Access</button>
     </div>
 
     <script>
-        let config = { lang: 'en', market: 'Maxima', plan: 'Free' };
-        const audio = new (window.AudioContext || window.webkitAudioContext)();
+        // --- ДАННЫЕ ПЕРЕВОДА ---
+        const translations = {
+            en: {
+                desc: "Precision biometric analysis and dietary intelligence system for clinical metabolic optimization.",
+                start: "Start Analysis",
+                pers: "Personalization",
+                market: "Preferred Market (Estonia)",
+                goal: "Dietary Goal",
+                loss: "Weight Loss",
+                health: "Metabolic Health",
+                gain: "Muscle Gain",
+                cont: "Continue",
+                mon_status: "Medical Monitor",
+                analysis: "Analysis",
+                quota: "Dietary Quota",
+                ai_btn: "Run AI Scan"
+            },
+            ru: {
+                desc: "Система точного биометрического анализа и диетического интеллекта для метаболической оптимизации.",
+                start: "Начать анализ",
+                pers: "Персонализация",
+                market: "Предпочитаемый магазин (Эстония)",
+                goal: "Цель диеты",
+                loss: "Снижение веса",
+                health: "Здоровье метаболизма",
+                gain: "Набор массы",
+                cont: "Продолжить",
+                mon_status: "Мед. Монитор",
+                analysis: "Анализ",
+                quota: "Квота калорий",
+                ai_btn: "Запустить ИИ-скан"
+            },
+            et: {
+                desc: "Täpne biomeetriline analüüs ja toitumisalane süsteem kliiniliseks metaboolseks optimeerimiseks.",
+                start: "Alusta analüüsi",
+                pers: "Personaliseerimine",
+                market: "Eelistatud pood (Eesti)",
+                goal: "Toitumise eesmärk",
+                loss: "Kaalulangus",
+                health: "Metaboolne tervis",
+                gain: "Lihasmassi kasv",
+                cont: "Jätka",
+                mon_status: "Meditsiiniline Monitor",
+                analysis: "Analüüs",
+                quota: "Kaloraaž",
+                ai_btn: "Käivita AI-skaneerimine"
+            }
+        };
+
+        let currentLang = 'en';
+
+        function changeLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('l-' + lang).classList.add('active');
+            
+            const t = translations[lang];
+            document.getElementById('t-intro-desc').innerText = t.desc;
+            document.getElementById('t-start-btn').innerText = t.start;
+            document.getElementById('t-pers-title').innerText = t.pers;
+            document.getElementById('t-market-label').innerText = t.market;
+            document.getElementById('t-goal-label').innerText = t.goal;
+            document.getElementById('t-opt-loss').innerText = t.loss;
+            document.getElementById('t-opt-health').innerText = t.health;
+            document.getElementById('t-opt-gain').innerText = t.gain;
+            document.getElementById('t-cont-btn').innerText = t.cont;
+            document.getElementById('t-monitor-status').innerText = t.mon_status;
+            document.getElementById('t-status-label').innerText = t.analysis;
+            document.getElementById('t-kcal-label').innerText = t.quota;
+            document.getElementById('t-ai-btn').innerText = t.ai_btn;
+            
+            calc(); // Пересчитать статус на новом языке
+        }
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            beep(800, 0.1);
-        }
-
-        function setLang(l) { 
-            config.lang = l; 
-            speak(l === 'ru' ? "Язык системы русский" : "System language English");
-            showScreen('scr-onboarding'); 
         }
 
         function setMarket(m) {
-            config.market = m;
-            document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-            document.getElementById('m-' + m.toLowerCase()).classList.add('selected');
-            beep(1000, 0.05);
-        }
-
-        async function toggleCamera() {
-            const v = document.getElementById('webcam');
-            const b = document.getElementById('snap-btn');
-            if (b.innerText.includes("Start")) {
-                try {
-                    const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                    v.srcObject = s; v.style.display = 'block';
-                    b.innerText = "⚡ Capture & Analyze";
-                    speak("Optical sensor active.");
-                } catch(e) { alert("Camera error"); }
-            } else {
-                v.style.display = 'none';
-                b.innerText = "📸 Start AI Scanner";
-                const mockWeight = Math.floor(Math.random() * 20) + 70;
-                document.getElementById('w').value = mockWeight;
-                calc();
-                speak("Scan complete. Weight detected.");
-                v.srcObject.getTracks().forEach(t => t.stop());
-            }
+            document.querySelectorAll('.market-opt').forEach(o => o.classList.remove('active'));
+            document.getElementById('m-' + m.toLowerCase()).classList.add('active');
         }
 
         function calc() {
             const h = document.getElementById('h').value;
             const w = document.getElementById('w').value;
             const bmi = (w / ((h/100)**2)).toFixed(1);
-            document.getElementById('live-bmi').innerText = `BMI: ${bmi}`;
+            const status = document.getElementById('status');
             
-            const s = document.getElementById('status');
-            if (bmi > 25) { s.innerText = "Overweight"; s.style.color = "#ff00ff"; }
-            else { s.innerText = "Normal"; s.style.color = "#39ff14"; }
+            if (bmi > 25) { 
+                status.innerText = currentLang === 'ru' ? "ИЗБЫТОК" : (currentLang === 'et' ? "ÜLEKAAL" : "OVERWEIGHT");
+                status.style.color = "var(--magenta)";
+            } else {
+                status.innerText = currentLang === 'ru' ? "НОРМА" : (currentLang === 'et' ? "NORMAALNE" : "NORMAL");
+                status.style.color = "var(--green)";
+            }
 
             const kcal = Math.round((10*w + 6.25*h - 5*30 + 5) * 1.55);
             document.getElementById('kcal').innerText = `${kcal} KCAL`;
@@ -201,31 +227,36 @@
             path.setAttribute('d', `M0,50 Q100,${50-amp} 200,50 T400,${50+amp/4}`);
         }
 
-        function beep(f, d) {
-            const o = audio.createOscillator();
-            const g = audio.createGain();
-            o.connect(g); g.connect(audio.destination);
-            o.frequency.value = f;
-            g.gain.exponentialRampToValueAtTime(0.01, audio.currentTime + d);
-            o.start(); o.stop(audio.currentTime + d);
+        // --- АНИМАЦИЯ ФОНА (ТОЧКИ) ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let dots = [];
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            dots = [];
+            for(let i=0; i<30; i++) {
+                dots.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5 });
+            }
         }
 
-        function speak(t) {
-            const u = new SpeechSynthesisUtterance(t);
-            u.lang = config.lang === 'ru' ? 'ru-RU' : 'en-US';
-            window.speechSynthesis.speak(u);
+        function drawDots() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#00ffcc';
+            dots.forEach(d => {
+                d.x += d.vx; d.y += d.vy;
+                if(d.x < 0 || d.x > canvas.width) d.vx *= -1;
+                if(d.y < 0 || d.y > canvas.height) d.vy *= -1;
+                ctx.beginPath(); ctx.arc(d.x, d.y, 1.5, 0, Math.PI*2); ctx.fill();
+            });
+            requestAnimationFrame(drawDots);
         }
 
-        function selectPlan(el) {
-            document.querySelectorAll('.glass').forEach(g => g.style.borderColor = '');
-            el.style.borderColor = 'var(--magenta)';
-            beep(1200, 0.1);
-        }
-
-        function checkout() {
-            speak("Redirecting to secure payment.");
-            alert("Silverita Labs: Redirecting to Telegram / Stripe Merchant...");
-        }
+        window.onresize = initCanvas;
+        initCanvas();
+        drawDots();
+        calc();
     </script>
 </body>
 </html>
