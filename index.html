@@ -3,193 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartBelly PRO | SB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <title>SmartBelly PRO | Ecosystem by Silverita Labs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --neon: #00ffcc; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        :root { --neon: #00ffcc; --dark: #050505; --accent: #00d2ff; }
         
         body { 
-            margin: 0; color: white; font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
-                        url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070') no-repeat center center fixed;
-            background-size: cover; min-height: 100vh;
+            background: var(--dark); color: white; font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden; -webkit-font-smoothing: antialiased;
         }
 
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
+        /* Динамический фон (Эффект инноваций) */
+        .bg-glow {
+            position: fixed; width: 300px; height: 300px; background: var(--neon);
+            filter: blur(150px); opacity: 0.1; border-radius: 50%; z-index: -1; animation: drift 20s infinite alternate;
         }
 
-        .screen { display: none; min-height: 100vh; padding: 20px; animation: fadeIn 0.4s ease; }
-        .screen.active { display: flex; flex-direction: column; }
-
-        /* ЛОГОТИП SB */
-        .sb-logo { font-size: 42px; font-weight: 900; letter-spacing: -4px; font-style: italic; }
-        .sb-logo span { color: var(--neon); }
-
-        .neon-btn {
-            background: linear-gradient(135deg, var(--neon), #00d2ff);
-            color: #000; border-radius: 12px; padding: 18px; font-weight: 900;
-            text-transform: uppercase; letter-spacing: 1px; font-size: 12px;
-            box-shadow: 0 10px 20px rgba(0, 255, 204, 0.2);
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 40px;
         }
+
+        .sb-logo { font-family: 'Orbitron', sans-serif; font-size: 48px; font-weight: 900; letter-spacing: -4px; font-style: italic; }
+        .sb-logo span { color: var(--neon); text-shadow: 0 0 20px rgba(0, 255, 204, 0.5); }
+
+        .screen { display: none; opacity: 0; transition: 0.5s ease; padding: env(safe-area-inset-top) 20px 100px 20px; }
+        .screen.active { display: flex; flex-direction: column; opacity: 1; }
+
+        /* Силуэт Атлета (Инновационная отрисовка) */
+        .body-path { fill: rgba(255,255,255,0.05); stroke: rgba(0, 255, 204, 0.2); stroke-width: 1.5; transition: 0.4s; cursor: pointer; }
+        .body-path.active { fill: rgba(0, 255, 204, 0.15); stroke: var(--neon); filter: drop-shadow(0 0 10px var(--neon)); }
 
         .chip { 
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
-            padding: 12px; border-radius: 12px; font-size: 9px; font-weight: 700; 
-            text-transform: uppercase; text-align: center; cursor: pointer; transition: 0.2s;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); 
+            padding: 16px; border-radius: 18px; font-size: 11px; font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
         }
-        .chip.active { border-color: var(--neon); color: var(--neon); background: rgba(0, 255, 204, 0.1); }
+        .chip.selected { border-color: var(--neon); color: var(--neon); background: rgba(0, 255, 204, 0.1); }
 
-        /* СИЛУЭТ АТЛЕТА */
-        .body-part { fill: rgba(255,255,255,0.05); stroke: rgba(255,255,255,0.3); transition: 0.3s; cursor: pointer; }
-        .body-part.selected { fill: rgba(0, 255, 204, 0.2); stroke: var(--neon); filter: drop-shadow(0 0 5px var(--neon)); }
+        .action-btn {
+            background: linear-gradient(135deg, var(--neon), var(--accent));
+            color: #000; font-weight: 900; border-radius: 20px; padding: 22px;
+            text-transform: uppercase; font-size: 14px; box-shadow: 0 15px 35px rgba(0, 255, 204, 0.3);
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes drift { from { top: -10%; left: -10%; } to { top: 70%; left: 80%; } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
 
-<div id="s0" class="screen active justify-center">
-    <div class="glass-card p-10 text-center">
-        <div class="sb-logo mb-2">S<span>B</span></div>
-        <p class="text-[8px] tracking-[6px] text-gray-500 uppercase mb-8">Silverita Labs OÜ</p>
-        <h1 class="text-xl font-black uppercase mb-10 tracking-widest italic">SmartBelly <span class="text-cyan-400">Pro</span></h1>
-        <button onclick="nav('s1')" class="neon-btn w-full">Начать Анализ</button>
+<div class="bg-glow"></div>
+
+<nav class="fixed top-0 left-0 w-full p-6 z-50 flex justify-between items-center bg-dark/50 backdrop-blur-md border-b border-white/5">
+    <div class="sb-logo text-2xl">S<span>B</span></div>
+    <div id="user-status" class="text-[9px] font-bold tracking-widest text-gray-500 uppercase">AI Ecosystem Online</div>
+</nav>
+
+<div id="screen-biometrics" class="screen active mt-24">
+    <h2 class="text-3xl font-black italic mb-2 tracking-tighter uppercase">Metrics</h2>
+    <p class="text-gray-500 text-xs mb-8 uppercase tracking-[3px]">Биометрический анализ ИИ</p>
+    
+    <div class="glass p-8 space-y-6">
+        <div class="grid grid-cols-3 gap-4">
+            <div class="space-y-2">
+                <p class="text-[9px] text-gray-400 uppercase font-bold">Возраст</p>
+                <input type="number" id="age" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center font-black">
+            </div>
+            <div class="space-y-2">
+                <p class="text-[9px] text-gray-400 uppercase font-bold">Рост</p>
+                <input type="number" id="height" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center font-black">
+            </div>
+            <div class="space-y-2">
+                <p class="text-[9px] text-gray-400 uppercase font-bold">Вес</p>
+                <input type="number" id="weight" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-center font-black">
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <p class="text-[9px] text-gray-400 uppercase font-bold">Клинические противопоказания:</p>
+            <div class="grid grid-cols-2 gap-3" id="health-grid">
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Диабет</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Травмы спины</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Гастрит</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Сердце</div>
+            </div>
+        </div>
+        <button onclick="changeScreen('screen-body')" class="action-btn w-full mt-4">Далее</button>
     </div>
 </div>
 
-<div id="s1" class="screen">
-    <h2 class="text-xl font-black mb-6 uppercase italic text-cyan-400">Metrics</h2>
-    <div class="glass-card p-6 space-y-6">
-        <div class="grid grid-cols-3 gap-3">
-            <input type="number" placeholder="Лет" class="bg-white/5 border border-white/10 p-4 rounded-xl text-center outline-none">
-            <input type="number" placeholder="Рост" class="bg-white/5 border border-white/10 p-4 rounded-xl text-center outline-none">
-            <input type="number" placeholder="Вес" class="bg-white/5 border border-white/10 p-4 rounded-xl text-center outline-none">
+<div id="screen-body" class="screen mt-24">
+    <h2 class="text-3xl font-black italic mb-2 tracking-tighter uppercase">Target</h2>
+    <p class="text-gray-500 text-xs mb-8 uppercase tracking-[3px]">Выбор зон коррекции</p>
+    
+    <div class="glass p-8 flex flex-col items-center">
+        <svg width="240" height="400" viewBox="0 0 100 200" id="body-svg">
+            <path d="M50 5 Q55 5 58 12 Q60 20 50 25 Q40 20 42 12 Q45 5 50 5" class="body-path" /> <path id="part-shoulders" d="M15 35 Q50 20 85 35 L92 65 Q50 70 8 65 Z" class="body-path" onclick="this.classList.toggle('active')" /> <path id="part-belly" d="M25 65 Q50 72 75 65 L72 105 Q50 115 28 105 Z" class="body-path" onclick="this.classList.toggle('active')" /> <path id="part-legs" d="M28 105 Q50 115 72 105 L82 195 L55 195 L50 140 L45 195 L18 195 Z" class="body-path" onclick="this.classList.toggle('active')" /> </svg>
+        <div class="grid grid-cols-2 gap-3 w-full mt-10">
+            <div class="chip text-center" onclick="document.getElementById('part-belly').classList.toggle('active')">Пресс / Талия</div>
+            <div class="chip text-center" onclick="document.getElementById('part-shoulders').classList.toggle('active')">Грудь / Плечи</div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-            <div class="chip" onclick="this.classList.toggle('active')">Диабет</div>
-            <div class="chip" onclick="this.classList.toggle('active')">Травмы Спины</div>
-        </div>
-        <button onclick="nav('s2')" class="neon-btn w-full">Далее</button>
+        <button onclick="changeScreen('screen-eco')" class="action-btn w-full mt-10">Подключить Экосистему</button>
     </div>
 </div>
 
-<div id="s2" class="screen items-center">
-    <h2 class="text-xl font-black mb-6 uppercase italic text-cyan-400">Target Area</h2>
-    <div class="glass-card p-6 w-full flex flex-col items-center">
-        <svg width="200" height="350" viewBox="0 0 100 200">
-            <path d="M50 5 Q55 5 58 12 Q60 20 50 25 Q40 20 42 12 Q45 5 50 5" class="body-part" />
-            <path id="chest" d="M15 35 Q50 20 85 35 L90 60 Q50 65 10 60 Z" class="body-part" onclick="this.classList.toggle('selected')" /> <path id="belly" d="M25 60 Q50 65 75 60 L72 100 Q50 110 28 100 Z" class="body-part" onclick="this.classList.toggle('selected')" />
-            <path id="legs" d="M28 100 Q50 110 72 100 L82 195 L55 195 L50 135 L45 195 L18 195 Z" class="body-part" onclick="this.classList.toggle('selected')" />
-        </svg>
-        <div class="grid grid-cols-2 gap-3 w-full mt-6">
-            <div class="chip" onclick="document.getElementById('belly').classList.toggle('selected')">Живот / Пресс</div>
-            <div class="chip" onclick="document.getElementById('chest').classList.toggle('selected')">Грудь / Спина</div>
-        </div>
-        <button onclick="nav('s3')" class="neon-btn w-full mt-8">Экосистема ГЕО</button>
-    </div>
-</div>
-
-<div id="s3" class="screen">
-    <h2 class="text-xl font-black mb-6 uppercase italic text-cyan-400">Ecosystem</h2>
-    <div class="glass-card p-6 space-y-8">
+<div id="screen-eco" class="screen mt-24">
+    <h2 class="text-3xl font-black italic mb-2 tracking-tighter uppercase">Sync</h2>
+    <p class="text-gray-500 text-xs mb-8 uppercase tracking-[3px]">Глобальная синхронизация</p>
+    
+    <div class="glass p-8 space-y-10">
         <div>
-            <p class="text-[9px] text-gray-500 uppercase mb-4 text-center tracking-widest">Мониторинг цен (Эстония):</p>
-            <div class="grid grid-cols-3 gap-2">
-                <div class="chip" onclick="this.classList.toggle('active')">Maxima</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Selver</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Rimi</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Prisma</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Coop</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Grossi</div>
+            <p class="text-[10px] text-cyan-400 font-black uppercase mb-5 tracking-widest">Магазины Эстонии (Парсинг цен):</p>
+            <div class="grid grid-cols-3 gap-3" id="store-grid">
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Maxima</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Selver</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Rimi</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Coop</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Prisma</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Grossi</div>
             </div>
         </div>
         <div>
-            <p class="text-[9px] text-gray-500 uppercase mb-4 text-center tracking-widest">Место активности:</p>
-            <div class="grid grid-cols-3 gap-2">
-                <div class="chip" onclick="this.classList.toggle('active')">Зал</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Дом</div>
-                <div class="chip" onclick="this.classList.toggle('active')">Улица</div>
+            <p class="text-[10px] text-cyan-400 font-black uppercase mb-5 tracking-widest">Место тренировок:</p>
+            <div class="grid grid-cols-3 gap-3">
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Зал</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Дом</div>
+                <div class="chip text-center" onclick="this.classList.toggle('selected')">Улица</div>
             </div>
         </div>
-        <button onclick="nav('s4')" class="neon-btn w-full">Создать мой план</button>
+        <button onclick="changeScreen('screen-plans')" class="action-btn w-full">Сформировать План</button>
     </div>
 </div>
 
-<div id="s4" class="screen">
-    <h2 class="text-xl font-black mb-6 uppercase italic text-cyan-400">Upgrade</h2>
+<div id="screen-plans" class="screen mt-24">
+    <h2 class="text-3xl font-black italic mb-2 tracking-tighter uppercase">Plans</h2>
+    <p class="text-gray-500 text-xs mb-8 uppercase tracking-[3px]">Уровень интеграции</p>
+    
     <div class="space-y-4">
-        <div class="glass-card p-6 border-l-4 border-gray-600" onclick="nav('s5')">
-            <div class="flex justify-between font-black uppercase mb-1"><span>Lite Plan</span><span>4.99€</span></div>
-            <p class="text-[8px] text-gray-400">Базовый план питания на 30 дней.</p>
+        <div class="glass p-6 border-l-4 border-gray-600" onclick="changeScreen('screen-hub')">
+            <div class="flex justify-between font-black text-xl italic uppercase mb-2"><span>Lite</span><span>4.99€</span></div>
+            <p class="text-[10px] text-gray-500 uppercase leading-relaxed font-bold">Базовый ИИ-рацион на 30 дней. Список продуктов.</p>
         </div>
-        <div class="glass-card p-6 border-l-4 border-cyan-400 bg-cyan-400/5" onclick="nav('s5')">
-            <div class="flex justify-between font-black uppercase mb-1 text-cyan-400"><span>Pro AI</span><span>9.99€</span></div>
-            <p class="text-[8px] text-gray-400">Vision AI (фото-контроль) + Цены Maxima/Selver.</p>
+        <div class="glass p-6 border-l-4 border-cyan-400 bg-cyan-400/5 shadow-[0_0_30px_rgba(0,255,204,0.1)]" onclick="changeScreen('screen-hub')">
+            <div class="flex justify-between font-black text-xl italic uppercase mb-2 text-cyan-400"><span>PRO AI</span><span>9.99€</span></div>
+            <p class="text-[10px] text-gray-400 uppercase leading-relaxed font-bold">Vision-контроль еды. Авто-поиск скидок в Selver/Maxima. Синхронизация с Apple Watch.</p>
         </div>
-        <div class="glass-card p-6 border-l-4 border-yellow-500" onclick="nav('s5')">
-            <div class="flex justify-between font-black uppercase mb-1 text-yellow-500"><span>Elite</span><span>29.99€</span></div>
-            <p class="text-[8px] text-gray-400">Всё включено + Прямой чат с врачом Silverita.</p>
+        <div class="glass p-6 border-l-4 border-yellow-500" onclick="changeScreen('screen-hub')">
+            <div class="flex justify-between font-black text-xl italic uppercase mb-2 text-yellow-500"><span>ELITE</span><span>29.99€</span></div>
+            <p class="text-[10px] text-gray-500 uppercase leading-relaxed font-bold">Интеграция с врачом Silverita. Генетический анализ питания. Доступ к закрытому клубу.</p>
         </div>
     </div>
 </div>
 
-<div id="s5" class="screen p-0">
-    <div class="p-6 bg-black/40 backdrop-blur-xl flex justify-between items-center">
-        <div class="sb-logo text-lg">S<span>B</span></div>
-        <div class="text-[10px] font-bold text-gray-500">23 JANUARY</div>
-    </div>
-
-    <div class="p-5 space-y-6">
-        <div class="flex gap-2 overflow-x-auto no-scrollbar">
-            <div class="chip active min-w-[70px]" onclick="selectDay(this)">ПН 20</div>
-            <div class="chip min-w-[70px]" onclick="selectDay(this)">ВТ 21</div>
-            <div class="chip min-w-[70px]" onclick="selectDay(this)">СР 22</div>
+<div id="screen-hub" class="screen p-0 pt-20">
+    <div class="p-6">
+        <div class="flex gap-4 overflow-x-auto no-scrollbar pb-6" id="calendar">
+            <div class="chip min-w-[80px] selected" onclick="selectDay(this)">ПН 20</div>
+            <div class="chip min-w-[80px]" onclick="selectDay(this)">ВТ 21</div>
+            <div class="chip min-w-[80px]" onclick="selectDay(this)">СР 22</div>
+            <div class="chip min-w-[80px]" onclick="selectDay(this)">ЧТ 23</div>
+            <div class="chip min-w-[80px]" onclick="selectDay(this)">ПТ 24</div>
         </div>
 
-        <div class="glass-card p-4 border-l-2 border-cyan-400">
-            <p class="text-[8px] text-cyan-400 font-bold uppercase mb-1">ИИ-Статус:</p>
-            <p class="text-[9px] text-gray-400 italic">"Цель: Мышечный рельеф. КБЖУ оптимизирован под тренировки в зале. Сахар под контролем."</p>
-        </div>
-
-        <div class="glass-card p-4">
-            <div class="flex justify-between mb-2">
-                <span class="text-[9px] font-black text-cyan-400 uppercase">Завтрак • 480 kcal</span>
-                <span class="text-[9px] text-gray-500">Selver: 2.45€</span>
+        <div class="glass p-6 mb-8 border-l-4 border-cyan-400">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                <p class="text-[10px] text-cyan-400 font-black uppercase">ИИ-Аналитика Silverita:</p>
             </div>
-            <p class="text-xs font-black uppercase mb-1">Творог 5% + Горсть миндаля</p>
-            <p class="text-[9px] text-gray-400 mb-3">200г творога, 20г орехов. <b>Рецепт:</b> Смешать, добавить сахарозаменитель по желанию.</p>
-            <button onclick="alert('Vision AI активирован! Сделайте фото.')" class="w-full py-2 border border-cyan-400/30 text-cyan-400 text-[8px] font-black uppercase rounded-lg">📸 Фото-Контроль</button>
+            <p id="ai-insight" class="text-xs italic text-gray-400 leading-relaxed">
+                "Обнаружен дефицит магния. Ваш сегодняшний рацион в Selver оптимизирован для восстановления после тренировки плечевого пояса."
+            </p>
         </div>
 
-        <div class="glass-card p-4">
-            <div class="flex justify-between mb-2">
-                <span class="text-[9px] font-black text-cyan-400 uppercase">Обед • 750 kcal</span>
-                <span class="text-[9px] text-gray-500">Maxima: 4.20€</span>
+        <div class="space-y-6">
+            <div class="glass p-6 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-4 opacity-10 font-black italic text-4xl">01</div>
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <p class="text-[10px] text-cyan-400 font-black uppercase mb-1">Завтрак • 08:30</p>
+                        <h3 class="text-lg font-black italic uppercase">Белковый Панкейк</h3>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xl font-black italic">420 <span class="text-[10px] text-gray-500">KCAL</span></p>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">Selver: 2.15€</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white/5 p-4 rounded-2xl">
+                        <p class="text-[8px] text-gray-500 uppercase font-black mb-1">Ингредиенты</p>
+                        <p class="text-[10px] leading-relaxed italic">150г Творога, 1 Яйцо, 30г Овсянки.</p>
+                    </div>
+                    <div class="bg-white/5 p-4 rounded-2xl">
+                        <p class="text-[8px] text-gray-500 uppercase font-black mb-1">Рецепт</p>
+                        <p class="text-[10px] leading-relaxed italic">Смешать блендером. Жарить на капле кокосового масла.</p>
+                    </div>
+                </div>
+
+                <button onclick="alert('Vision AI: Камера холодильника подключена...')" class="w-full action-btn py-4 rounded-2xl text-[10px] tracking-widest">
+                    📸 Верификация Vision AI
+                </button>
             </div>
-            <p class="text-xs font-black uppercase mb-1">Говядина + Макароны тв. сортов</p>
-            <p class="text-[9px] text-gray-400 mb-3">150г стейка, 100г макарон. <b>Рецепт:</b> Мясо на гриле 5 мин, макароны варить 9 мин.</p>
-            <button onclick="alert('Vision AI активирован! Сделайте фото.')" class="w-full py-2 border border-cyan-400/30 text-cyan-400 text-[8px] font-black uppercase rounded-lg">📸 Фото-Контроль</button>
+
+            <div class="glass p-6 relative">
+                <div class="absolute top-0 right-0 p-4 opacity-10 font-black italic text-4xl">02</div>
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <p class="text-[10px] text-cyan-400 font-black uppercase mb-1">Обед • 13:00</p>
+                        <h3 class="text-lg font-black italic uppercase">Филе Индейки + Киноа</h3>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xl font-black italic">680 <span class="text-[10px] text-gray-500">KCAL</span></p>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">Maxima: 3.80€</p>
+                    </div>
+                </div>
+                <button class="w-full py-4 border border-white/10 rounded-2xl text-[10px] uppercase font-black tracking-widest text-gray-500">
+                    Дождаться времени приема
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    function nav(id) {
+    function changeScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0,0);
+        const nextScreen = document.getElementById(screenId);
+        nextScreen.classList.add('active');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        
+        // Логика для холодильника (имитация)
+        if(screenId === 'screen-hub') {
+            document.getElementById('user-status').innerHTML = 'Sync: Refrigerator Active';
+            document.getElementById('user-status').style.color = '#00ffcc';
+        }
     }
+
     function selectDay(el) {
-        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
+        document.querySelectorAll('#calendar .chip').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
     }
+
+    // Инициализация при клике на лого
+    document.querySelector('.sb-logo').onclick = () => location.reload();
 </script>
 </body>
 </html>
