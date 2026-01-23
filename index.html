@@ -3,114 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartBelly PRO | Silverita Labs</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Montserrat:wght@100;300;900&display=swap" rel="stylesheet">
+    <title>SmartBelly PRO | Silverita Labs Global Ecosystem</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Montserrat:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
     <style>
-        :root { --neon: #00ffcc; --dark: #000; --panel: rgba(255,255,255,0.03); }
-        body { 
-            background: var(--dark); color: white; font-family: 'Montserrat', sans-serif;
-            margin: 0; overflow: hidden; height: 100vh;
+        /* ДИЗАЙН-СИСТЕМА SILVERITA LABS 2026-2050 */
+        :root {
+            --neon: #00ffcc;
+            --neon-glow: rgba(0, 255, 204, 0.4);
+            --dark-deep: #000000;
+            --dark-surface: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.07);
+            --accent-red: #ff3e3e; /* Для травм и ограничений */
         }
 
-        /* ЕДИНЫЙ ХОЛСТ (NO PAGES) */
-        .main-container {
-            display: grid;
-            grid-template-columns: 350px 1fr 350px;
-            height: 100vh; gap: 20px; padding: 20px;
-        }
-
-        /* СТЕКЛЯННЫЕ ПАНЕЛИ */
-        .glass-module {
-            background: var(--panel); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 40px; padding: 30px; display: flex; flex-direction: column;
-            backdrop-filter: blur(30px);
-        }
-
-        /* ЛОГОТИП */
-        .logo { font-family: 'Syncopate', sans-serif; font-size: 28px; letter-spacing: -3px; }
-        .logo span { color: var(--neon); text-shadow: 0 0 20px var(--neon); }
-
-        /* ИНТЕРАКТИВНЫЙ АТЛАС (ЦЕНТР) */
-        .muscle { fill: rgba(255,255,255,0.02); stroke: rgba(0,255,204,0.1); transition: 0.4s; cursor: pointer; }
-        .muscle.active { fill: var(--neon); opacity: 0.3; stroke: var(--neon); filter: drop-shadow(0 0 25px var(--neon)); }
-
-        /* СПИСОК МАГАЗИНОВ (ЭКОНОМИКА) */
-        .retail-chip {
-            padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);
-            font-size: 10px; font-weight: 900; text-transform: uppercase; cursor: pointer;
-            transition: 0.3s; background: rgba(255,255,255,0.01);
-        }
-        .retail-chip.active { border-color: var(--neon); color: var(--neon); box-shadow: 0 0 15px rgba(0,255,204,0.1); }
-
-        /* РАЦИОН (HUB) */
-        .meal-card {
-            border-left: 2px solid var(--neon); padding-left: 20px; margin-bottom: 30px;
-        }
-
-        /* СКРОЛЛ-БАРЫ */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
         
-        @media (max-width: 1200px) {
-            .main-container { grid-template-columns: 1fr; overflow-y: auto; height: auto; }
-            body { overflow-y: auto; }
+        body {
+            background-color: var(--dark-deep);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* Монолитная структура без лишнего скролла */
+            height: 100vh;
+        }
+
+        /* ГРАФИЧЕСКИЙ ФОН - ЖИВАЯ МАТРИЦА */
+        .matrix-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 204, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(0, 210, 255, 0.05) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        /* ОСНОВНОЙ ГРИД СИСТЕМЫ */
+        .ecosystem-grid {
+            display: grid;
+            grid-template-columns: 420px 1fr 420px;
+            height: 100vh;
+            padding: 30px;
+            gap: 30px;
+        }
+
+        /* МОДУЛИ */
+        .module {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(40px);
+            position: relative;
+        }
+
+        /* HEADER */
+        .brand-header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 32px;
+            letter-spacing: -3px;
+            text-transform: uppercase;
+        }
+        .logo span { color: var(--neon); text-shadow: 0 0 20px var(--neon-glow); }
+
+        /* ИНТЕРАКТИВНЫЙ АТЛАС ТЕЛА */
+        #body-canvas {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .anatomy-svg {
+            height: 85%;
+            filter: drop-shadow(0 0 30px rgba(255,255,255,0.02));
+            transition: 0.5s transform cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .muscle-group {
+            fill: rgba(255,255,255,0.03);
+            stroke: rgba(255,255,255,0.1);
+            stroke-width: 0.5;
+            transition: 0.3s all;
+            cursor: pointer;
+        }
+
+        .muscle-group:hover { fill: rgba(0, 255, 204, 0.1); stroke: var(--neon); }
+        .muscle-group.active { fill: var(--neon); opacity: 0.4; stroke: var(--neon); filter: drop-shadow(0 0 15px var(--neon)); }
+        .muscle-group.trauma { fill: var(--accent-red); opacity: 0.6; stroke: var(--accent-red); }
+
+        /* ИНПУТЫ И КОНТРОЛЛЕРЫ */
+        .data-row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;
+        }
+
+        .input-group {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 20px;
+        }
+
+        .input-label { font-size: 9px; font-weight: 900; color: #444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        .input-value { background: transparent; border: none; font-size: 20px; font-weight: 900; color: #fff; width: 100%; outline: none; }
+
+        /* СПИСОК РИТЕЙЛА */
+        .retail-monitor { flex-grow: 1; overflow-y: auto; padding-right: 10px; }
+        .retail-monitor::-webkit-scrollbar { width: 2px; }
+        .retail-monitor::-webkit-scrollbar-thumb { background: var(--border); }
+
+        .store-card {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+        .store-card.active { border-left: 4px solid var(--neon); background: rgba(0, 255, 204, 0.02); }
+
+        .price-tag { font-family: 'Syncopate', sans-serif; font-size: 14px; color: var(--neon); }
+
+        /* LIFE HUB (DAILY FEED) */
+        .feed-container { flex-grow: 1; overflow-y: auto; }
+        .meal-unit {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 40px;
+        }
+        .meal-unit::before {
+            content: ''; position: absolute; left: 0; top: 0; width: 2px; height: 100%;
+            background: linear-gradient(to bottom, var(--neon), transparent);
+        }
+
+        .vision-btn {
+            width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--neon-glow);
+            color: var(--neon); font-size: 10px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 2px; margin-top: 15px; transition: 0.3s;
+        }
+        .vision-btn:hover { background: var(--neon); color: #000; }
+
+        /* НИЖНЯЯ ПАНЕЛЬ СТАТУСА */
+        .status-bar {
+            height: 80px; background: var(--glass); border-top: 1px solid var(--border);
+            margin-top: auto; display: flex; align-items: center; justify-content: space-between; padding: 0 40px;
+        }
+
+        /* АНИМАЦИИ */
+        .flicker { animation: flicker 3s infinite; }
+        @keyframes flicker { 
+            0%, 100% { opacity: 1; } 50% { opacity: 0.7; }
+        }
+
+        /* МОБИЛЬНАЯ АДАПТАЦИЯ (ГЛОБАЛЬНАЯ) */
+        @media (max-width: 1400px) {
+            .ecosystem-grid { grid-template-columns: 1fr 1fr; overflow-y: auto; height: auto; }
+            .module { min-height: 800px; }
+            #body-canvas { height: 600px; }
         }
     </style>
 </head>
 <body>
 
-<div class="main-container">
+<div class="matrix-bg"></div>
+
+<div class="ecosystem-grid">
     
-    <aside class="glass-module">
-        <div class="logo mb-12 uppercase">S<span>B</span> PRO</div>
-        
-        <div class="space-y-10 flex-grow">
-            <section>
-                <p class="text-[9px] font-black text-gray-600 uppercase tracking-[4px] mb-6">User Biometrics</p>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white/5 p-4 rounded-2xl">
-                        <p class="text-[8px] text-gray-500 uppercase">Weight</p>
-                        <input type="number" value="85" class="bg-transparent text-xl font-black w-full outline-none">
+    <section class="module p-10">
+        <div class="brand-header">
+            <div class="logo">S<span>B</span> PRO</div>
+            <p class="text-[9px] font-bold text-gray-500 tracking-[8px] uppercase mt-2">Silverita Labs OÜ</p>
+        </div>
+
+        <div class="flex-grow">
+            <h3 class="text-3xl font-black italic uppercase mb-8 leading-none">Bio<br>Matrix</h3>
+            
+            <div class="data-row">
+                <div class="input-group">
+                    <p class="input-label">Weight (kg)</p>
+                    <input type="number" class="input-value" value="88" id="in-weight">
+                </div>
+                <div class="input-group">
+                    <p class="input-label">Height (cm)</p>
+                    <input type="number" class="input-value" value="184">
+                </div>
+            </div>
+
+            <div class="data-row">
+                <div class="input-group">
+                    <p class="input-label">Body Fat %</p>
+                    <input type="number" class="input-value" value="14.2">
+                </div>
+                <div class="input-group">
+                    <p class="input-label">Age</p>
+                    <input type="number" class="input-value" value="32">
+                </div>
+            </div>
+
+            <div class="mt-10">
+                <p class="input-label mb-4">Clinical Restrictions</p>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-4 border border-accent-red/20 rounded-2xl bg-accent-red/5">
+                        <span class="text-[11px] font-black uppercase tracking-widest text-accent-red">Diabetes Type II</span>
+                        <div class="w-2 h-2 bg-accent-red rounded-full flicker"></div>
                     </div>
-                    <div class="bg-white/5 p-4 rounded-2xl">
-                        <p class="text-[8px] text-gray-500 uppercase">Goal</p>
-                        <p class="text-xs font-black text-neon uppercase mt-1">Muscle Up</p>
+                    <div class="flex items-center justify-between p-4 border border-white/5 rounded-2xl cursor-pointer" onclick="toggleTrauma(this)">
+                        <span class="text-[11px] font-black uppercase tracking-widest text-gray-500">Spine Injury (L4-L5)</span>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section>
-                <p class="text-[9px] font-black text-gray-600 uppercase tracking-[4px] mb-6">Medical Filters</p>
-                <div class="space-y-2">
-                    <div class="retail-chip active">Diabetes Type 2</div>
-                    <div class="retail-chip" onclick="this.classList.toggle('active')">Spine Trauma (L4-L5)</div>
-                    <div class="retail-chip" onclick="this.classList.toggle('active')">Knee Surgery</div>
+            <div class="mt-10">
+                <p class="input-label mb-4">Retail Ecosystem EE</p>
+                <div class="retail-monitor no-scrollbar">
+                    <div class="store-card active">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-black italic uppercase">Selver</h4>
+                            <span class="price-tag">Live</span>
+                        </div>
+                        <p class="text-[9px] text-gray-500 mt-2 uppercase">Sync: Salmon, Oats, Eggs - Optimized</p>
+                    </div>
+                    <div class="store-card">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-black italic uppercase text-gray-600">Maxima</h4>
+                            <span class="text-[10px] text-gray-700">Scan Required</span>
+                        </div>
+                    </div>
                 </div>
-            </section>
+            </div>
+        </div>
 
-            <section>
-                <p class="text-[9px] font-black text-gray-600 uppercase tracking-[4px] mb-6">Estonia Retail Sync</p>
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="retail-chip text-center active">Selver</div>
-                    <div class="retail-chip text-center">Maxima</div>
-                    <div class="retail-chip text-center active">Rimi</div>
-                    <div class="retail-chip text-center">Prisma</div>
+        <div class="mt-auto">
+            <div class="p-6 bg-white/5 rounded-3xl border border-white/5 flex justify-between items-center">
+                <div>
+                    <p class="text-[10px] font-black uppercase text-neon">PRO AI ACTIVE</p>
+                    <p class="text-[8px] text-gray-600 mt-1">Next Billing: 23 Feb 2026</p>
                 </div>
-            </section>
+                <div class="text-xl font-black">9.99€</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="module relative border-none bg-transparent shadow-none">
+        <div class="absolute top-10 left-10">
+            <p class="text-[10px] font-black uppercase tracking-[15px] text-gray-700">Neural Reconstruction</p>
         </div>
 
-        <div class="mt-10 p-6 bg-white/5 rounded-3xl border border-white/5">
-            <p class="text-[8px] text-gray-500 uppercase mb-2">Current Plan</p>
-            <p class="text-sm font-black italic uppercase">Pro AI <span class="text-neon ml-2">9.99€</span></p>
+        <div id="body-canvas">
+            <svg viewBox="0 0 100 210" class="anatomy-svg">
+                <path d="M50 5 Q55 5 58 12 Q60 20 50 25 Q40 20 42 12 Q45 5 50 5" class="muscle-group" />
+                <path id="m-chest" d="M15 38 Q50 25 85 38 L92 68 Q50 75 8 68 Z" class="muscle-group" onclick="selectMuscle(this)" />
+                <path id="m-abs" d="M25 68 Q50 75 75 68 L72 108 Q50 118 28 108 Z" class="muscle-group active" onclick="selectMuscle(this)" />
+                <path d="M5 42 L12 38 L25 68 L15 75 Z" class="muscle-group" />
+                <path d="M95 42 L88 38 L75 68 L85 75 Z" class="muscle-group" />
+                <path id="m-legs" d="M28 108 Q50 118 72 108 L85 198 L55 198 L50 148 L45 198 L15 198 Z" class="muscle-group" onclick="selectMuscle(this)" />
+            </svg>
         </div>
-    </aside>
 
-    <main class="flex flex-col items-center justify-center relative">
-        <div class="absolute top-10 text-center">
-            <h1 class="text-6xl font-black italic uppercase leading-none opacity-20">Anatomical<br>Correction</h1>
+        <div class="status-bar rounded-[40px] mb-4 mx-4">
+            <div class="flex items-center gap-4">
+                <div class="w-3 h-3 bg-neon rounded-full flicker"></div>
+                <span class="text-[10px] font-black uppercase tracking-widest">Ecosystem Status: Stable</span>
+            </div>
+            <div class="flex gap-8">
+                <div class="text-center"><p class="text-[8px] text-gray-500 uppercase">KCAL</p><p class="text-sm font-black italic">2,450</p></div>
+                <div class="text-center"><p class="text-[8px] text-gray-500 uppercase">PROT</p><p class="text-sm font-black italic">185g</p></div>
+                <div class="text-center"><p class="text-[8px] text-gray-500 uppercase">WATER</p><p class="text-sm font-black italic text-neon">3.2L</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="module p-10">
+        <h3 class="text-3xl font-black italic uppercase mb-10 leading-none">Daily<br>Evolution</h3>
+
+        <div class="feed-container no-scrollbar">
+            <div class="meal-unit">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-[10px] font-black text-neon uppercase mb-1 tracking-widest">Breakfast • 08:30</p>
+                        <h4 class="text-2xl font-black italic uppercase">Morning<br>Core Mix</h4>
+                    </div>
+                    <div class="text-right">
+                        <p class="price-tag">2.15 €</p>
+                        <p class="text-[8px] text-gray-600 font-bold uppercase mt-1">Selver</p>
+                    </div>
+                </div>
+                <div class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
+                    <p class="text-[11px] font-bold text-gray-400 mb-4">
+                        150g Творог (0.5%), 40g Овсянка, 10g Чиа, 1 Яйцо.
+                    </p>
+                    <p class="text-[10px] italic text-gray-600 leading-relaxed uppercase">
+                        Инфо: Протокол дефицита сахара. Омега-3 добавлена через семена чиа.
+                    </p>
+                    <button class="vision-btn" onclick="triggerVision()">📸 Verify Vision AI</button>
+                </div>
+            </div>
+
+            <div class="meal-unit opacity-30">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <p class="text-[10px] font-black text-gray-500 uppercase mb-1 tracking-widest">Lunch • 13:30</p>
+                        <h4 class="text-2xl font-black italic uppercase">Turkey<br>Anatomy Fuel</h4>
+                    </div>
+                    <div class="text-right">
+                        <p class="price-tag text-gray-600">3.80 €</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="meal-unit opacity-30">
+                <p class="text-[10px] font-black text-gray-700 uppercase tracking-widest">Dinner • 19:00</p>
+                <h4 class="text-2xl font-black italic uppercase text-gray-800">Deep Sleep Casein</h4>
+            </div>
         </div>
 
-        <svg width="400" height="600" viewBox="0 0 100 200" class="drop-shadow-2xl">
-            <path d="M50 5 Q55 5 58 12 Q60 20 50 25 Q40 20 42 12 Q45 5 50 5" class="muscle" />
-            <path id="chest" d="M10 40 Q50 20 90 40 L95 70 Q50 75 5 70 Z" class="muscle" onclick="this.classList.toggle('active')" />
-            <path id="abs" d="M25 70 Q50 75 75 70 L72 110 Q50 120 28 1
+        <div class="mt-10">
+            <div class="p-8 bg-neon rounded-[40px] text-black shadow-[0_20px_50px_rgba(0,255,204,0.2)]">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-[10px] font-black uppercase tracking-widest">Financial Save</span>
+                    <span class="font-black italic">Today</span>
+                </div>
+                <div class="flex items-end gap-2">
+                    <span class="text-5xl font-black italic leading-none">+5.42€</span>
+                    <span class="text-[10px] font-bold uppercase pb
