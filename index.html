@@ -7,74 +7,83 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --cyan: #00ffcc; --dark: #05080f; --glass: rgba(15, 23, 35, 0.9); }
-        body { background: var(--dark); color: white; font-family: 'Inter', sans-serif; margin: 0; }
-        .screen { display: none; min-height: 100vh; flex-direction: column; padding: 20px; animation: fadeIn 0.3s ease; }
+        :root { --cyan: #00ffcc; --dark: #05080f; --glass: rgba(15, 23, 35, 0.95); }
+        body { background: var(--dark); color: white; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        .screen { display: none; min-height: 100vh; flex-direction: column; padding: 20px; animation: slideUp 0.4s ease; }
         .screen.active { display: flex; }
-        .glass-card { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; backdrop-filter: blur(15px); }
-        .neon-btn { border: 2px solid var(--cyan); color: var(--cyan); border-radius: 50px; padding: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; text-align: center; background: transparent; transition: 0.3s; }
-        .neon-btn:hover { background: var(--cyan); color: black; box-shadow: 0 0 20px var(--cyan); }
-        .chip { border: 1px solid #333; padding: 10px; border-radius: 12px; font-size: 10px; cursor: pointer; text-align: center; }
-        .chip.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0, 255, 204, 0.1); box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
-        .body-part { fill: #222; transition: 0.5s; }
-        .body-part.active { fill: var(--cyan); filter: drop-shadow(0 0 5px var(--cyan)); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .glass-card { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 28px; backdrop-filter: blur(15px); }
+        .neon-btn { border: 2px solid var(--cyan); color: var(--cyan); border-radius: 50px; padding: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; text-align: center; background: transparent; transition: 0.3s; width: 100%; }
+        .neon-btn:hover { background: var(--cyan); color: black; box-shadow: 0 0 25px var(--cyan); }
+        .chip { border: 1px solid #333; padding: 12px; border-radius: 14px; font-size: 11px; cursor: pointer; transition: 0.2s; text-align: center; }
+        .chip.active { border-color: var(--cyan); color: var(--cyan); background: rgba(0, 255, 204, 0.1); box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); }
+        .body-part { fill: #1a1a1a; transition: 0.4s; stroke: #333; stroke-width: 1; }
+        .body-part.selected { fill: var(--cyan); filter: drop-shadow(0 0 8px var(--cyan)); stroke: var(--cyan); }
     </style>
 </head>
 <body>
 
-<div id="s1" class="screen active items-center justify-center text-center">
-    <h1 class="text-3xl font-black mb-8 italic">SmartBelly <span class="text-cyan-400">PRO</span></h1>
+<div id="s1" class="screen active items-center justify-center">
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-black italic italic">SmartBelly <span class="text-cyan-400">PRO</span></h1>
+        <p class="text-[8px] tracking-[5px] text-gray-500 uppercase mt-2">Silverita Labs OÜ</p>
+    </div>
     <div class="glass-card p-8 w-full max-w-sm">
-        <p class="text-[10px] text-gray-500 mb-6 uppercase tracking-widest">Выберите язык / Select Language</p>
+        <p class="text-[10px] text-center text-gray-400 mb-6 uppercase tracking-widest">Выберите язык / Select Language</p>
         <div class="grid grid-cols-2 gap-3 mb-8">
-            <button onclick="setLang('RU')" class="chip active">Русский</button>
-            <button onclick="setLang('ET')" class="chip">Eesti</button>
-            <button onclick="setLang('EN')" class="chip">English</button>
-            <button onclick="setLang('FI')" class="chip">Suomi</button>
+            <div class="chip active" onclick="selectChip(this)">Русский</div>
+            <div class="chip" onclick="selectChip(this)">Eesti</div>
+            <div class="chip" onclick="selectChip(this)">English</div>
+            <div class="chip" onclick="selectChip(this)">Suomi</div>
         </div>
-        <button onclick="nav('s2')" class="neon-btn w-full">Далее / Next</button>
+        <button onclick="nav('s2')" class="neon-btn">Далее</button>
     </div>
 </div>
 
 <div id="s2" class="screen">
-    <button onclick="nav('s1')" class="text-xs text-gray-600 mb-6 uppercase tracking-widest">← Назад</button>
-    <h2 class="text-2xl font-black mb-6 uppercase">Ваши метрики</h2>
-    <div class="glass-card p-6 space-y-5">
+    <button onclick="nav('s1')" class="text-xs text-gray-600 mb-8 uppercase tracking-widest">← Назад</button>
+    <h2 class="text-2xl font-black mb-6 uppercase">Ваши показатели</h2>
+    <div class="glass-card p-6 space-y-6">
         <div><label class="text-[9px] text-gray-500 uppercase ml-2">Ваш возраст</label>
         <input type="number" placeholder="Введите возраст" class="w-full bg-black/50 border border-gray-800 p-4 rounded-2xl mt-1 focus:border-cyan-400 outline-none"></div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-4">
             <div><label class="text-[9px] text-gray-500 uppercase ml-2">Рост (см)</label><input type="number" placeholder="0" class="w-full bg-black/50 border border-gray-800 p-4 rounded-2xl mt-1 focus:border-cyan-400 outline-none"></div>
             <div><label class="text-[9px] text-gray-500 uppercase ml-2">Вес (кг)</label><input type="number" placeholder="0" class="w-full bg-black/50 border border-gray-800 p-4 rounded-2xl mt-1 focus:border-cyan-400 outline-none"></div>
         </div>
-        <button onclick="nav('s3')" class="neon-btn w-full">Далее</button>
+        <button onclick="nav('s3')" class="neon-btn">Далее</button>
     </div>
 </div>
 
 <div id="s3" class="screen">
     <button onclick="nav('s2')" class="text-xs text-gray-600 mb-4 uppercase tracking-widest">← Назад</button>
-    <h2 class="text-xl font-black mb-4 uppercase text-center">Выберите зоны коррекции</h2>
+    <h2 class="text-xl font-black mb-6 uppercase text-center">Где будем убирать жир?</h2>
     
-    <div class="flex justify-center mb-6">
-        <svg width="120" height="240" viewBox="0 0 100 200">
-            <path id="part-chest" class="body-part" d="M30 40 h40 v30 h-40 z" /> <path id="part-belly" class="body-part" d="M30 75 h40 v40 h-40 z" /> <path id="part-legs" class="body-part" d="M30 120 h15 v70 h-15 z M55 120 h15 v70 h-15 z" /> <circle cx="50" cy="20" r="15" fill="#222" /> </svg>
+    <div class="flex justify-center mb-8">
+        <svg width="150" height="280" viewBox="0 0 100 200">
+            <circle cx="50" cy="25" r="12" class="body-part" />
+            <path id="part-upper" class="body-part" d="M35 40 L65 40 L75 80 L65 85 L60 55 L40 55 L35 85 L25 80 Z" />
+            <path id="part-belly" class="body-part" d="M40 55 L60 55 L65 95 L35 95 Z" />
+            <path id="part-legs" class="body-part" d="M35 95 L50 100 L65 95 L70 180 L55 180 L50 110 L45 180 L30 180 Z" />
+        </svg>
     </div>
 
-    <div class="grid grid-cols-2 gap-3">
-        <button onclick="highlight('part-belly')" class="chip uppercase font-bold">Живот</button>
-        <button onclick="highlight('part-chest')" class="chip uppercase font-bold">Грудь / Руки</button>
-        <button onclick="highlight('part-legs')" class="chip uppercase font-bold">Ноги / Бедра</button>
-        <button onclick="highlight('all')" class="chip uppercase font-bold">Все тело</button>
+    <div class="grid grid-cols-2 gap-3 mb-6">
+        <div class="chip" onclick="toggleBody('part-belly', this)">Живот / Бока</div>
+        <div class="chip" onclick="toggleBody('part-upper', this)">Руки / Грудь</div>
+        <div class="chip" onclick="toggleBody('part-legs', this)">Ноги / Бедра</div>
+        <div class="chip" onclick="toggleAllBody(this)">Все тело</div>
     </div>
-    <button onclick="nav('s4')" class="neon-btn w-full mt-6">Подтвердить</button>
+    <button onclick="nav('s4')" class="neon-btn">Зафиксировать выбор</button>
 </div>
 
 <div id="s4" class="screen">
     <button onclick="nav('s3')" class="text-xs text-gray-600 mb-6 uppercase tracking-widest">← Назад</button>
-    <h2 class="text-xl font-black mb-4 uppercase text-cyan-400">Настройка инфраструктуры</h2>
+    <h2 class="text-xl font-black mb-2 uppercase">Ваша среда</h2>
+    <p class="text-[10px] text-gray-500 mb-6 italic">Выберите все подходящие варианты:</p>
+    
     <div class="glass-card p-6 space-y-6">
         <div>
-            <p class="text-[10px] text-gray-400 mb-3 uppercase tracking-tighter italic">Какие сети магазинов вы предпочитаете?</p>
+            <p class="text-[9px] text-cyan-400 font-bold uppercase mb-3">Где вы закупаетесь?</p>
             <div class="grid grid-cols-3 gap-2">
                 <div class="chip" onclick="this.classList.toggle('active')">MAXIMA</div>
                 <div class="chip" onclick="this.classList.toggle('active')">SELVER</div>
@@ -85,66 +94,60 @@
             </div>
         </div>
         <div>
-            <p class="text-[10px] text-gray-400 mb-3 uppercase tracking-tighter italic">Где будете тренироваться? (Скидка по SB)</p>
+            <p class="text-[9px] text-cyan-400 font-bold uppercase mb-3">Ваш спортзал (скидка по SmartBelly):</p>
             <div class="grid grid-cols-2 gap-2">
                 <div class="chip" onclick="this.classList.toggle('active')">MYFITNESS -20%</div>
                 <div class="chip" onclick="this.classList.toggle('active')">24/7 FITNESS</div>
-                <div class="chip" onclick="this.classList.toggle('active')">ПАРК / УЛИЦА</div>
-                <div class="chip" onclick="this.classList.toggle('active')">ДОМА</div>
+                <div class="chip" onclick="this.classList.toggle('active')">STREET WORKOUT</div>
+                <div class="chip" onclick="this.classList.toggle('active')">HOME GYM</div>
             </div>
         </div>
-        <button onclick="nav('s5')" class="neon-btn w-full">Создать план</button>
+        <button onclick="nav('s5')" class="neon-btn">Рассчитать стоимость</button>
     </div>
 </div>
 
-<div id="s5" class="screen items-center justify-center">
-    <div class="w-24 h-24 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mb-8"></div>
-    <h3 class="text-xl font-black uppercase tracking-[5px] animate-pulse">Анализ данных...</h3>
-    <p class="text-[10px] text-gray-500 mt-4 text-center">Silverita Labs OÜ формирует связь с магазинами Таллина...</p>
-    <script>setTimeout(() => { if(document.getElementById('s5').classList.contains('active')) nav('s6') }, 2500)</script>
+<div id="s5" class="screen items-center justify-center text-center">
+    <div class="w-20 h-20 border-b-4 border-cyan-400 rounded-full animate-spin"></div>
+    <h3 class="text-2xl font-black mt-10 uppercase tracking-[10px] animate-pulse">Анализ</h3>
+    <p class="text-[10px] text-gray-600 mt-4 max-w-xs uppercase">Синхронизация данных Silverita Labs OÜ с базами цен Эстонии...</p>
+    <script>setTimeout(() => { if(document.getElementById('s5').classList.contains('active')) nav('s6') }, 3000)</script>
 </div>
 
 <div id="s6" class="screen items-center justify-center">
-    <div class="glass-card p-8 w-full max-w-sm border-2 border-cyan-400">
+    <div class="glass-card p-8 w-full max-w-sm border-2 border-cyan-400 relative">
         <h3 class="text-xl font-black uppercase">PRO AI CLINIC</h3>
-        <p class="text-[9px] text-gray-500 mt-1 uppercase italic tracking-widest">Полная экосистема SmartBelly</p>
-        <div class="my-10 text-5xl font-black">9.99€ <span class="text-sm font-normal text-gray-600">/мес</span></div>
+        <div class="my-10 text-6xl font-black italic">9.99€</div>
         <div class="space-y-4">
-            <button onclick="nav('s7')" class="neon-btn w-full">Оплатить Картой</button>
-            <button onclick="nav('s7')" class="w-full py-4 border border-yellow-500/30 text-yellow-500 rounded-3xl text-[10px] font-black uppercase">USDT / Crypto</button>
+            <button onclick="nav('s7')" class="neon-btn">Оплата Картой</button>
+            <button onclick="nav('s7')" class="w-full py-4 border border-yellow-500/20 text-yellow-500 rounded-3xl text-[10px] font-black uppercase">USDT / Crypto</button>
         </div>
-        <p class="text-[8px] text-gray-700 mt-8 text-center uppercase tracking-widest">System safe: Connection status - Locked</p>
     </div>
 </div>
 
 <div id="s7" class="screen p-0">
-    <header class="p-6 flex justify-between items-center glass rounded-none border-x-0 border-t-0">
-        <span class="text-[10px] font-black text-cyan-400 tracking-[3px]">HUB MONITOR</span>
-        <div class="w-8 h-4 bg-cyan-900/30 border border-cyan-500/50 rounded-full relative"><div class="w-3 h-3 bg-cyan-400 rounded-full absolute top-0.5 right-1"></div></div>
+    <header class="p-6 flex justify-between items-center glass rounded-none border-t-0 border-x-0">
+        <span class="text-[10px] font-black text-cyan-400 tracking-widest uppercase">Smart Monitor</span>
+        <div class="w-8 h-4 bg-gray-800 rounded-full relative"><div class="w-3 h-3 bg-cyan-400 rounded-full absolute top-0.5 right-1"></div></div>
     </header>
     <div class="p-6 space-y-6">
-        <div class="glass-card p-6"><canvas id="wChart" height="150"></canvas></div>
+        <div class="glass-card p-6"><canvas id="mainChart" height="150"></canvas></div>
         <div class="glass-card p-6 flex justify-between items-center" onclick="nav('s8')">
-            <div><h4 class="text-xs font-black uppercase">Ужин: Индейка PRO</h4><p class="text-[10px] text-gray-500 mt-1">4.20€ в Maxima</p></div>
-            <span class="text-cyan-400 text-xl font-bold">→</span>
+            <span class="text-xs font-bold uppercase">Сегодняшний рецепт (Maxima)</span>
+            <span class="text-cyan-400">→</span>
         </div>
     </div>
-    <nav class="fixed bottom-0 w-full p-6 glass rounded-none border-t border-gray-900 flex justify-around">
-        <button class="text-xl">🔔</button>
-        <button onclick="nav('s1')" class="w-14 h-14 bg-cyan-400 rounded-full flex items-center justify-center -mt-10 text-black font-black text-xl shadow-xl">SB</button>
-        <button class="text-xl">⏲️</button>
-    </nav>
 </div>
 
 <div id="s8" class="screen p-0">
-    <div class="relative h-64 bg-gray-900">
-        <button onclick="nav('s7')" class="absolute top-6 left-6 z-10 glass w-10 h-10 rounded-full">✕</button>
-        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600" class="w-full h-full object-cover opacity-60">
+    <div class="h-64 bg-gray-900 relative">
+        <button onclick="nav('s7')" class="absolute top-6 left-6 z-10 glass p-3 rounded-full">✕</button>
+        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600" class="w-full h-full object-cover opacity-50">
     </div>
-    <div class="p-6 space-y-6">
-        <h2 class="text-2xl font-black uppercase tracking-tighter">Филе индейки с зеленью</h2>
-        <div class="glass-card p-5"><p class="text-xs leading-relaxed text-gray-300"><span class="text-cyan-400 font-bold uppercase">Шаг 1:</span> Купите филе в <b>Maxima</b>. Нарежьте кубиками и обжарьте 7 минут.</p></div>
-        <button class="neon-btn w-full">Завершить готовку</button>
+    <div class="p-8">
+        <h2 class="text-3xl font-black uppercase mb-6">Индейка PRO</h2>
+        <div class="glass-card p-6">
+            <p class="text-sm leading-relaxed text-gray-300">Купите филе в <b>Maxima</b> по акции. Нарежьте и обжарьте 7 минут. Идеально для зоны "Живот".</p>
+        </div>
     </div>
 </div>
 
@@ -156,120 +159,27 @@
         window.scrollTo(0,0);
     }
 
-    function highlight(partId) {
-        document.querySelectorAll('.body-part').forEach(p => p.classList.remove('active'));
-        if(partId === 'all') {
-            document.querySelectorAll('.body-part').forEach(p => p.classList.add('active'));
-        } else {
-            document.getElementById(partId).classList.add('active');
-        }
+    function selectChip(el) {
+        el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function toggleBody(id, el) {
+        el.classList.toggle('active');
+        document.getElementById(id).classList.toggle('selected');
+    }
+
+    function toggleAllBody(el) {
+        el.classList.toggle('active');
+        document.querySelectorAll('.body-part').forEach(p => p.classList.toggle('selected'));
     }
 
     function renderChart() {
-        const ctx = document.getElementById('wChart').getContext('2d');
+        const ctx = document.getElementById('mainChart').getContext('2d');
         new Chart(ctx, {
             type: 'line',
-            data: { labels: ['W1', 'W2', 'W3', 'W4'], datasets: [{ data: [82, 80, 79, 78], borderColor: '#00ffcc', tension: 0.4, fill: true, backgroundColor: 'rgba(0, 255, 204, 0.05)', pointRadius: 0 }] },
+            data: { labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт'], datasets: [{ data: [82, 80, 79, 78.5, 78], borderColor: '#00ffcc', tension: 0.4, fill: true, backgroundColor: 'rgba(0, 255, 204, 0.05)', pointRadius: 0 }] },
             options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#333' } } } }
-        });
-    }
-</script>
-</body>
-</html>        <div class="text-[8px] bg-cyan-400 text-black px-2 py-1 absolute top-4 right-4 font-black">PREMIUM</div>
-        <h3 class="text-xl font-black mb-2 uppercase">PRO AI CLINIC</h3>
-        <div class="text-5xl font-black my-8 italic">9.99€ <span class="text-sm font-light text-gray-500">/мес</span></div>
-        <div class="space-y-3">
-            <button onclick="nav('s7')" class="neon-btn text-sm">Карта / Apple Pay</button>
-            <button onclick="nav('s7')" class="w-full py-4 border border-yellow-500/30 text-yellow-500 rounded-3xl text-[9px] font-black uppercase">Crypto (USDT/BTC)</button>
-        </div>
-        <p class="text-[8px] text-gray-600 mt-6 text-center italic">Anti-Timeout Security Protocol v2.0 Active</p>
-    </div>
-</div>
-
-<div id="s7" class="screen p-0">
-    <header class="p-6 flex justify-between items-center bg-black/50 border-b border-white/5 sticky top-0 z-50 backdrop-blur-md">
-        <span class="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Monitor</span>
-        <div class="flex items-center gap-3">
-            <span class="text-[8px] text-gray-500 font-bold uppercase">Voice Help</span>
-            <div class="w-10 h-5 bg-cyan-500/10 border border-cyan-500/40 rounded-full relative"><div class="w-3 h-3 bg-cyan-400 rounded-full absolute top-1 right-1"></div></div>
-        </div>
-    </header>
-    
-    <div class="p-6 space-y-6 pb-32">
-        <div class="glass-card p-5 relative overflow-hidden">
-            <div class="h-44 bg-black/60 rounded-3xl border border-gray-800 relative overflow-hidden flex items-center justify-center">
-                <div class="scan-line"></div>
-                <p class="text-[10px] text-gray-700 font-mono uppercase">Ready to scan product...</p>
-            </div>
-            <button class="neon-btn mt-4 py-3 text-xs" onclick="nav('s8')">Перейти к рецепту</button>
-        </div>
-        <div class="glass-card p-6">
-            <canvas id="weightChart" height="180"></canvas>
-            <div class="grid grid-cols-3 gap-2 mt-8">
-                <div class="text-center"><p class="text-[8px] text-gray-500">ВЕС</p><p class="font-black">78</p></div>
-                <div class="text-center"><p class="text-[8px] text-gray-500">BMI</p><p class="font-black text-cyan-400">24.6</p></div>
-                <div class="text-center"><p class="text-[8px] text-gray-500">ККАЛ</p><p class="font-black text-magenta-400">2586</p></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="s8" class="screen p-0">
-    <div class="p-6"><button onclick="nav('s7')" class="text-xs text-gray-500 uppercase tracking-widest">← К Мониторингу</button></div>
-    <div class="p-6 space-y-6 pb-32">
-        <div class="glass-card p-6">
-            <h4 class="text-sm font-black uppercase mb-4 text-cyan-400 italic">Ужин: Салат с филе индейки</h4>
-            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600" class="w-full h-56 object-cover rounded-3xl mb-6 shadow-2xl">
-            <div class="space-y-4">
-                <p class="text-[12px] leading-relaxed">
-                    <span class="text-cyan-400 font-bold">ИНСТРУКЦИЯ:</span> Зайдите в <b>Maxima</b> (сегодня цена 4.20€). Нарежьте и обжарьте 7 минут.
-                </p>
-                <div class="p-4 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center">
-                    <span class="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Активность рядом:</span>
-                    <span class="text-[10px] text-cyan-400 font-bold uppercase">MyFitness (400m)</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <nav class="fixed bottom-0 w-full p-6 glass-card rounded-none border-t border-white/5 flex justify-around items-center z-50 backdrop-blur-xl">
-        <button class="text-xl">🔔</button>
-        <button onclick="nav('s1')" class="w-16 h-16 bg-cyan-400 rounded-full flex items-center justify-center -mt-12 shadow-[0_10px_40px_rgba(0,255,204,0.4)] text-black font-black text-xl">SB</button>
-        <button class="text-xl">⏲️</button>
-    </nav>
-</div>
-
-<script>
-    function nav(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(id === 's7') initWeightChart();
-        window.scrollTo(0,0);
-    }
-
-    function initWeightChart() {
-        const ctx = document.getElementById('weightChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Сегодня'],
-                datasets: [{
-                    data: [82, 80.5, 79.8, 79, 78],
-                    borderColor: '#00ffcc',
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: 'rgba(0, 255, 204, 0.05)',
-                    pointRadius: 0,
-                    borderWidth: 4
-                }]
-            },
-            options: {
-                plugins: { legend: { display: false } },
-                scales: { 
-                    y: { display: false },
-                    x: { grid: { display: false }, ticks: { color: '#333', font: { size: 9 } } }
-                }
-            }
         });
     }
 </script>
