@@ -3,195 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBelly PRO | Silverita Labs</title>
+    <title>SmartBelly PRO | Silverita Labs OÜ</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --bg: #0b101a; --cyan: #00ffcc; --magenta: #ff00ff; --green: #39ff14; }
-        body { background: var(--bg); color: #e6edf3; font-family: 'Segoe UI', sans-serif; min-height: 100vh; overflow-x: hidden; margin: 0; }
+        body { background: var(--bg); color: #e6edf3; font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; }
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.6; }
         
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.7; }
-
-        .screen { display: none; padding: 20px; min-height: 100vh; animation: fadeIn 0.4s ease; }
-        .screen.active { display: flex; flex-direction: column; align-items: center; }
+        .screen { display: none; padding: 20px; min-height: 100vh; flex-direction: column; align-items: center; animation: fadeIn 0.3s ease-out; }
+        .screen.active { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .glass { background: rgba(22, 27, 34, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; backdrop-filter: blur(20px); padding: 25px; width: 100%; max-width: 400px; }
+        .glass { background: rgba(22, 27, 34, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; backdrop-filter: blur(20px); padding: 20px; width: 100%; max-width: 450px; margin-bottom: 15px; }
+        .btn-neon { border: 1px solid var(--cyan); color: var(--cyan); border-radius: 30px; padding: 14px; width: 100%; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.3s; background: transparent; text-align: center; }
+        .btn-neon:hover { background: var(--cyan); color: black; box-shadow: 0 0 20px var(--cyan); }
         
-        .btn-neon { border: 1px solid var(--cyan); color: var(--cyan); border-radius: 30px; padding: 14px; width: 100%; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.3s; background: transparent; letter-spacing: 1px; }
-        .btn-neon:hover { background: var(--cyan); color: black; box-shadow: 0 0 25px var(--cyan); }
+        .logo-box { width: 65px; height: 65px; background: white; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: black; font-size: 1.6rem; margin-bottom: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
         
-        .logo-box { width: 70px; height: 70px; margin-bottom: 15px; background: white; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #000; font-size: 1.8rem; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .lang-switch { position: fixed; top: 15px; right: 15px; display: flex; gap: 4px; z-index: 1000; }
+        .lang-dot { width: 34px; height: 34px; border-radius: 8px; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; background: #161b22; font-weight: bold; }
+        .lang-dot.active { border-color: var(--cyan); color: var(--cyan); }
 
-        input, select { background: #0d1117; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 12px; width: 100%; outline: none; text-align: center; }
-
-        .lang-switch { position: absolute; top: 20px; right: 20px; display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; max-width: 150px; }
-        .lang-dot { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: 9px; cursor: pointer; background: #161b22; font-weight: bold; }
-        .lang-dot.active { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(0,255,204,0.3); }
-        
-        .wave-path { filter: drop-shadow(0 0 8px var(--cyan)); }
+        .back-btn { align-self: flex-start; color: #666; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; cursor: pointer; }
+        .geo-badge { background: rgba(0, 255, 204, 0.1); color: var(--cyan); padding: 2px 8px; border-radius: 5px; font-size: 9px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
+<canvas id="bg-canvas"></canvas>
 
-    <div class="lang-switch">
-        <div onclick="changeLang('et')" id="dot-et" class="lang-dot">ET</div>
-        <div onclick="changeLang('fi')" id="dot-fi" class="lang-dot">FI</div>
-        <div onclick="changeLang('ru')" id="dot-ru" class="lang-dot">RU</div>
-        <div onclick="changeLang('en')" id="dot-en" class="lang-dot">EN</div>
+<div class="lang-switch">
+    <div onclick="setL('et')" id="l-et" class="lang-dot">ET</div>
+    <div onclick="setL('fi')" id="l-fi" class="lang-dot">FI</div>
+    <div onclick="setL('ru')" id="l-ru" class="lang-dot">RU</div>
+    <div onclick="setL('en')" id="l-en" class="lang-dot">EN</div>
+</div>
+
+<div id="scr-intro" class="screen active justify-center">
+    <div class="logo-box">SB</div>
+    <h1 class="text-3xl font-bold tracking-tighter">SmartBelly PRO</h1>
+    <p class="text-gray-500 text-[9px] tracking-[4px] mb-2 uppercase">Silverita Labs OÜ</p>
+    <div id="geo-info" class="geo-badge mb-8">📍 Detecting location...</div>
+    
+    <div class="glass text-center">
+        <p id="t-desc" class="text-xs text-gray-400 mb-8"></p>
+        <button onclick="nav('scr-quiz')" id="t-start" class="btn-neon"></button>
+    </div>
+</div>
+
+<div id="scr-quiz" class="screen pt-10">
+    <div onclick="nav('scr-intro')" class="back-btn">← <span id="t-back1"></span></div>
+    <h2 id="t-quiz-title" class="text-xl font-bold mb-6 text-cyan-400"></h2>
+    <div class="glass space-y-4">
+        <input type="number" id="age" placeholder="Age" value="30">
+        <input type="number" id="weight" placeholder="Weight (kg)" value="75">
+        <select id="goal" class="w-full bg-[#0d1117] text-white p-3 rounded-xl border border-gray-700">
+            <option value="loss" id="t-g1"></option>
+            <option value="gain" id="t-g2"></option>
+        </select>
+        <button onclick="nav('scr-plans')" id="t-next" class="btn-neon"></button>
+    </div>
+</div>
+
+<div id="scr-plans" class="screen pt-10">
+    <div onclick="nav('scr-quiz')" class="back-btn">← <span id="t-back2"></span></div>
+    <h2 id="t-plans-title" class="text-xl font-bold mb-6"></h2>
+    
+    <div class="glass border-cyan-400 border-2 mb-4">
+        <h3 class="font-bold text-cyan-400">PRO AI CLINIC</h3>
+        <p class="text-[10px] text-gray-400 mt-2" id="t-plan-desc">Full Sync & Local Optimization</p>
+        <p class="text-2xl font-bold mt-4" id="t-price">9.99€</p>
+        <button onclick="nav('scr-main')" class="btn-neon mt-4 text-xs" id="t-pay"></button>
     </div>
 
-    <div id="scr-intro" class="screen active justify-center">
-        <div class="logo-box">SB</div>
-        <h1 class="text-3xl font-bold tracking-tighter mb-1 text-center">SmartBelly PRO</h1>
-        <p class="text-gray-500 text-[9px] tracking-[4px] mb-8 uppercase text-center">Silverita Labs OÜ</p>
+    <div class="glass">
+        <h4 class="text-[10px] text-gray-500 uppercase mb-3" id="t-near-lbl">Nearby Facilities</h4>
+        <div id="local-list" class="space-y-2 text-xs">
+            </div>
+    </div>
+</div>
+
+<div id="scr-main" class="screen pt-6">
+    <div class="w-full max-w-sm">
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-cyan-400 text-[10px] font-bold" id="t-live">LIVE MONITORING</span>
+            <button onclick="nav('scr-intro')" class="text-[9px] text-gray-600">LOGOUT</button>
+        </div>
         
-        <div class="glass text-center">
-            <p id="t-desc" class="text-xs text-gray-400 mb-10 leading-relaxed"></p>
-            <button onclick="showScreen('scr-onboarding')" id="t-start" class="btn-neon"></button>
-        </div>
-        <p class="text-[8px] text-gray-700 mt-12 uppercase italic tracking-widest">Precision Medical Logic v2.5</p>
-    </div>
-
-    <div id="scr-onboarding" class="screen pt-20">
-        <h2 id="t-pers" class="text-xl font-bold mb-8 text-cyan-400 self-start ml-4"></h2>
-        <div class="glass space-y-6">
-            <div>
-                <label id="t-market" class="text-[10px] text-gray-500 uppercase ml-2 mb-2 block"></label>
-                <div class="flex gap-3">
-                    <button class="flex-1 p-3 border border-gray-700 rounded-xl text-xs hover:border-cyan-400 transition">MAXIMA</button>
-                    <button class="flex-1 p-3 border border-gray-700 rounded-xl text-xs hover:border-cyan-400 transition">GROSSI</button>
+        <div class="glass">
+            <canvas id="progChart" height="140"></canvas>
+            <div class="flex justify-between mt-6">
+                <div class="text-left">
+                    <p class="text-[9px] text-gray-500 uppercase" id="t-bmi-lbl"></p>
+                    <h3 id="bmi-val" class="font-bold text-magenta-400">24.5</h3>
                 </div>
-            </div>
-            <div>
-                <label id="t-goal" class="text-[10px] text-gray-500 uppercase ml-2 mb-2 block"></label>
-                <select id="goal_sel">
-                    <option value="1" id="t-g1"></option>
-                    <option value="2" id="t-g2"></option>
-                </select>
-            </div>
-            <button onclick="showScreen('scr-main')" id="t-cont" class="btn-neon mt-4"></button>
-        </div>
-    </div>
-
-    <div id="scr-main" class="screen pt-10">
-        <div class="w-full max-w-md">
-            <svg class="w-full h-20 mb-8" viewBox="0 0 400 100">
-                <path id="wave" class="wave-path" d="M0,50 Q100,20 200,50 T400,50" fill="none" stroke="#00ffcc" stroke-width="3" />
-            </svg>
-            
-            <div class="glass">
-                <div class="grid grid-cols-2 gap-4 mb-8">
-                    <input type="number" id="h" value="175" oninput="calc()">
-                    <input type="number" id="w" value="75" oninput="calc()">
+                <div class="text-right">
+                    <p class="text-[9px] text-gray-500 uppercase" id="t-kcal-lbl"></p>
+                    <h3 class="text-green-400 font-bold" id="kcal-val">2633 KCAL</h3>
                 </div>
-                
-                <div class="flex justify-between items-end mb-8">
-                    <div class="text-left">
-                        <p id="t-status-lbl" class="text-[9px] text-gray-500 uppercase mb-1"></p>
-                        <h2 class="font-bold text-xl tracking-tight" id="status_val">---</h2>
-                    </div>
-                    <div class="text-right">
-                        <p id="t-kcal-lbl" class="text-[9px] text-gray-500 uppercase mb-1"></p>
-                        <h2 class="text-green-400 font-bold text-xl tracking-tight" id="kcal_val">---</h2>
-                    </div>
-                </div>
-                
-                <button onclick="alert('AI Processing...')" class="btn-neon text-xs" id="t-run"></button>
-            </div>
-            
-            <div class="mt-6 glass">
-               <p id="t-diet-title" class="text-cyan-400 text-[10px] uppercase font-bold mb-4 tracking-widest"></p>
-               <div class="border-t border-gray-800 pt-4">
-                   <p id="t-meal" class="font-bold text-sm">Turkey Wrap</p>
-                   <p class="text-[10px] text-gray-500 mt-1">Spinach, Eggs, Bell Pepper</p>
-               </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        const dict = {
-            et: {
-                desc: "Täpne biomeetriline analüüs ja toitumisintellekti süsteem kliiniliseks metaboolseks optimeerimiseks.",
-                start: "Alusta analüüsi",
-                pers: "Personaliseerimine",
-                market: "Eelistatud pood (Eesti)",
-                goal: "Toitumise eesmärk",
-                g1: "Kaalulangus", g2: "Lihasmassi kasv",
-                cont: "Jätka",
-                status_lbl: "Analüüsi tulemus",
-                kcal_lbl: "Päevane kaloraaž",
-                run: "Käivita analüüs",
-                diet: "Personaalse Digitaalne Toitumisnõustaja",
-                meal: "Türgi rull spinatiga",
-                normal: "NORMAALNE", over: "ÜLEKAAL"
-            },
-            fi: {
-                desc: "Tarkka biometrinen analyysi ja ravitsemustietojärjestelmä kliiniseen metaboliseen optimointiin.",
-                start: "Aloita analyysi",
-                pers: "Personointi",
-                market: "Suosittu kauppa",
-                goal: "Ruokavalion tavoite",
-                g1: "Painonpudotus", g2: "Lihasmassan kasvu",
-                cont: "Jatka",
-                status_lbl: "Analyysin tulos",
-                kcal_lbl: "Päivittäinen kiintiö",
-                run: "Suorita analyysi",
-                diet: "Henkilökohtainen Digitaalinen Diabetologi",
-                meal: "Kalkkuna wrap pinaatilla",
-                normal: "NORMAALI", over: "YLIPIAINO"
-            },
-            ru: {
-                desc: "Система точного биометрического анализа и диетического интеллекта для метаболической оптимизации.",
-                start: "Начать анализ",
-                pers: "Персонализация",
-                market: "Предпочитаемый магазин (Эстония)",
-                goal: "Цель диеты",
-                g1: "Снижение веса", g2: "Набор массы",
-                cont: "Продолжить",
-                status_lbl: "Результат анализа",
-                kcal_lbl: "Квота калорий",
-                run: "Запустить анализ",
-                diet: "Персональный цифровой диетолог",
-                meal: "Рулет из индейки со шпинатом",
-                normal: "НОРМА", over: "ИЗБЫТОК"
-            },
-            en: {
-                desc: "Precision biometric analysis and dietary intelligence system for clinical metabolic optimization.",
-                start: "Start Analysis",
-                pers: "Personalization",
-                market: "Preferred Market",
-                goal: "Dietary Goal",
-                g1: "Weight Loss", g2: "Muscle Gain",
-                cont: "Continue",
-                status_lbl: "Analysis Result",
-                kcal_lbl: "Dietary Quota",
-                run: "Run Analysis",
-                diet: "Personalized Digital Dietitian",
-                meal: "Turkey Wrap with Spinach",
-                normal: "NORMAL", over: "OVERWEIGHT"
-            }
-        };
-
-        let currentLang = 'et';
-
-        function changeLang(l) {
-            currentLang = l;
-            document.querySelectorAll('.lang-dot').forEach(d => d.classList.remove('active'));
-            document.getElementById('dot-' + l).classList.add('active');
-            
-            const t = dict[l];
-            document.getElementById('t-desc').innerText = t.desc;
-            document.getElementById('t-start').innerText = t.start;
-            document.getElementById('t-pers').innerText = t.pers;
-            document.getElementById('t-market').innerText = t.market;
-            document.getElementById('t-goal').innerText = t.goal;
-            document.getElementById('t-g1').innerText = t.g1;
-            document.getElementById('t-g2').innerText = t.g2;
-            document.getElementById('t-cont').innerText = t.cont;
-            document.getElementById('t-status-lbl').innerText = t.status_lbl;
-            document.getElementById('t-kcal-lbl').innerText = t.kcal_lbl;
-            document.getElementById('t-run').innerText = t.run;
-            document.
+<script>
+    const dict = {
+        et: {
+            desc: "Nutikas toitumissüsteem Silverita Labs-ilt. Kohandatud Eesti turule.",
+            start: "Alusta", back: "Tagasi", quiz_title: "Andmed", g1: "Kaalulangus", g2: "Lihasmass",
+            next: "Edasi", plans_title: "Teenused", pay: "Telli", live: "MONITOORING", 
+            bmi_lbl: "BMI staatus", kcal_lbl: "Päevane kvoot", near_lbl: "Lähedal asuvad kohad",
+            shops: ["Maxima", "Grossi Toidukaubad", "MyFitness"], price: "9.99€"
+        },
+        fi: {
+            desc: "Älykäs ravitsemusjärjestelmä. Optimoitu Suomen markkinoille.",
+            start: "Aloita", back: "Takaisin", quiz_title: "Tiedot", g1: "Painonpudotus", g2: "Lihasmassa",
+            next: "Seuraava", plans_title: "Palvelut", pay: "Tilaa", live: "SEURANTA", 
+            bmi_lbl: "BMI-tila", kcal_lbl: "Kalorikiintiö", near_lbl: "Lähistöllä",
+            shops: ["S-Market", "K-Citymarket", "Elixia"], price: "9.99€"
+        },
+        ru:
