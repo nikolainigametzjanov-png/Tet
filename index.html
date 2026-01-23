@@ -7,80 +7,171 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --bg: #0b0e14; --cyan: #00ffcc; --magenta: #ff00ff; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
-        .screen { display: none; min-height: 100vh; animation: fadeIn 0.4s ease; flex-direction: column; }
+        :root { --cyan: #00ffcc; --magenta: #ff00ff; --bg: #05080f; --glass: rgba(17, 25, 40, 0.8); }
+        body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; margin: 0; }
+        .screen { display: none; min-height: 100vh; flex-direction: column; animation: fadeIn 0.5s ease; }
         .screen.active { display: flex; }
-        .glass { background: rgba(17, 25, 40, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; backdrop-filter: blur(12px); }
-        .neon-border { border: 2px solid var(--cyan); box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
-        .btn-main { background: transparent; border: 2px solid var(--cyan); color: var(--cyan); border-radius: 50px; padding: 16px; font-weight: 700; transition: 0.3s; text-transform: uppercase; width: 100%; text-align: center; }
-        .btn-main:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .scan-line { height: 2px; background: var(--cyan); position: absolute; width: 100%; top: 0; animation: scan 2s infinite linear; box-shadow: 0 0 15px var(--cyan); }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        @keyframes fadeIn { from { opacity: 0; scale: 0.98; } to { opacity: 1; scale: 1; } }
+        .glass { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; backdrop-filter: blur(12px); }
+        .neon-btn { border: 2px solid var(--cyan); color: var(--cyan); border-radius: 50px; padding: 15px; font-weight: 800; transition: 0.3s; text-transform: uppercase; text-align: center; cursor: pointer; background: transparent; }
+        .neon-btn:hover { background: var(--cyan); color: black; box-shadow: 0 0 20px var(--cyan); }
+        .shop-tag { border: 1px solid #333; padding: 6px 12px; rounded: 10px; font-size: 10px; cursor: pointer; }
+        .shop-tag.selected { border-color: var(--cyan); color: var(--cyan); background: rgba(0, 255, 204, 0.1); }
+        .scan-line { height: 2px; background: var(--cyan); position: absolute; width: 100%; top: 0; animation: scan 2.5s infinite linear; box-shadow: 0 0 15px var(--cyan); }
+        @keyframes scan { from { top: 0; } to { top: 100%; } }
     </style>
 </head>
 <body>
 
-<div id="page1" class="screen active p-6 items-center justify-center">
-    <div class="text-center mb-12">
-        <h1 class="text-4xl font-black tracking-tighter">SmartBelly <span class="text-cyan-400">PRO</span></h1>
-        <p class="text-[9px] tracking-[5px] text-gray-500 uppercase mt-2">Silverita Labs OÜ</p>
+<div id="pg1" class="screen active items-center justify-center p-6">
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-black italic tracking-tighter">SmartBelly <span class="text-cyan-400">PRO</span></h1>
+        <p class="text-[8px] tracking-[5px] text-gray-500 uppercase mt-2">Silverita Labs OÜ</p>
     </div>
-    <div class="glass p-8 w-full max-w-sm text-center">
-        <p class="text-xs text-gray-400 mb-6 uppercase tracking-widest">Select System Language</p>
-        <div class="grid grid-cols-1 gap-4">
-            <button onclick="nav('page2')" class="btn-main">Русский</button>
-            <button onclick="nav('page2')" class="btn-main border-gray-600 text-gray-400 hover:border-cyan-400">English</button>
+    <div class="glass p-8 w-full max-w-sm">
+        <p class="text-[10px] text-center text-gray-400 mb-6 uppercase tracking-widest">Выберите язык / Select Language</p>
+        <div class="space-y-4">
+            <button onclick="nav('pg2')" class="neon-btn w-full">Русский</button>
+            <button onclick="nav('pg2')" class="neon-btn w-full opacity-50 border-gray-600 text-gray-400">English / Eesti</button>
         </div>
-    </div>
-    <p class="mt-12 text-[9px] text-gray-700 font-mono">PRECISION MEDICAL LOGIC V2.5</p>
-</div>
-
-<div id="page2" class="screen p-6">
-    <div class="flex justify-between items-center mb-8">
-        <button onclick="nav('page1')" class="text-[10px] text-gray-500 font-bold uppercase">← Назад</button>
-        <span class="text-[10px] bg-cyan-900/30 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/30">📍 Эстония (Таллин)</span>
-    </div>
-    <h2 class="text-2xl font-bold mb-6">Персонализация</h2>
-    <div class="glass p-6 space-y-5">
-        <div>
-            <label class="text-[10px] text-gray-500 uppercase ml-1">Возраст / Вес (кг)</label>
-            <div class="grid grid-cols-2 gap-3 mt-1">
-                <input type="number" value="45" class="bg-black/40 border border-gray-800 p-4 rounded-2xl w-full">
-                <input type="number" value="78" class="bg-black/40 border border-gray-800 p-4 rounded-2xl w-full">
-            </div>
-        </div>
-        <div>
-            <label class="text-[10px] text-gray-500 uppercase ml-1">Ваша цель</label>
-            <select class="bg-black/40 border border-gray-800 p-4 rounded-2xl w-full mt-1 appearance-none">
-                <option>Набор массы</option>
-                <option selected>Сброс веса (Живот)</option>
-            </select>
-        </div>
-        <div>
-            <label class="text-[10px] text-gray-500 uppercase ml-1 text-cyan-400">Магазины рядом</label>
-            <div class="flex gap-2 mt-2">
-                <button class="text-[10px] border border-cyan-500/50 bg-cyan-500/10 px-4 py-2 rounded-xl">MAXIMA</button>
-                <button class="text-[10px] border border-gray-800 px-4 py-2 rounded-xl text-gray-500">GROSSI</button>
-            </div>
-        </div>
-        <button onclick="nav('page3')" class="btn-main mt-4">Рассчитать план</button>
     </div>
 </div>
 
-<div id="page3" class="screen p-6 items-center">
-    <h2 class="text-2xl font-bold mb-8 text-center">Доступ к системе</h2>
-    <div class="glass p-8 w-full max-w-sm neon-border relative overflow-hidden">
-        <div class="absolute top-4 right-4 text-[8px] bg-magenta-600 px-2 py-0.5 rounded font-bold">SMART FRIDGE</div>
-        <h3 class="text-xl font-black">PRO AI CLINIC</h3>
-        <p class="text-[10px] text-gray-500 mt-1 uppercase italic">Precision Dietology</p>
-        <div class="my-8 text-4xl font-black">9.99€ <span class="text-sm text-gray-500 font-normal">/ mo</span></div>
+<div id="pg2" class="screen p-6">
+    <div class="flex justify-between items-center mb-6">
+        <button onclick="nav('pg1')" class="text-xs text-gray-500 uppercase">← Назад</button>
+        <div class="text-[9px] text-cyan-400 px-3 py-1 glass border-cyan-500/30">📍 Tallinn, Estonia</div>
+    </div>
+    <h2 class="text-xl font-black mb-4 uppercase">Анализ тела</h2>
+    <div class="glass p-5 space-y-4">
+        <div class="grid grid-cols-3 gap-2">
+            <div><label class="text-[8px] text-gray-500 uppercase">Возраст</label><input type="number" value="45" class="w-full bg-black/40 border border-gray-800 p-3 rounded-xl text-sm"></div>
+            <div><label class="text-[8px] text-gray-500 uppercase">Рост</label><input type="number" value="178" class="w-full bg-black/40 border border-gray-800 p-3 rounded-xl text-sm"></div>
+            <div><label class="text-[8px] text-gray-500 uppercase">Вес</label><input type="number" value="78" class="w-full bg-black/40 border border-gray-800 p-3 rounded-xl text-sm"></div>
+        </div>
+        
+        <div>
+            <label class="text-[9px] text-gray-500 uppercase">Целевые магазины и Клубы</label>
+            <div class="flex flex-wrap gap-2 mt-2">
+                <span class="shop-tag selected">MAXIMA</span><span class="shop-tag">GROSSI</span><span class="shop-tag">SELVER</span><span class="shop-tag">MYFITNESS</span>
+            </div>
+        </div>
+
+        <div class="p-3 border-l-2 border-magenta-500 bg-magenta-500/5">
+            <p class="text-[10px] text-magenta-400 font-bold uppercase">Проблемная зона: Живот</p>
+            <p class="text-[9px] text-gray-400 mt-1">ИИ рассчитал: при вашем возрасте (45) метаболизм требует коррекции в 12%.</p>
+        </div>
+        <button onclick="nav('pg3')" class="neon-btn w-full">Перейти к оплате</button>
+    </div>
+</div>
+
+<div id="pg3" class="screen p-6 items-center">
+    <div class="w-full mb-6"><button onclick="nav('pg2')" class="text-xs text-gray-500 uppercase">← Назад</button></div>
+    <div class="glass p-6 w-full max-w-sm border-2 border-cyan-400 relative">
+        <h3 class="font-black text-xl mb-1">PRO AI ACCESS</h3>
+        <p class="text-[9px] text-gray-500 mb-6 uppercase">Включает парсинг цен и ИИ-камеру</p>
+        <div class="text-4xl font-black mb-8">9.99€ <span class="text-sm font-normal text-gray-500">/ мес</span></div>
         
         <div class="space-y-3">
-            <button onclick="nav('page4')" class="btn-main py-4 text-sm">Оплатить картой</button>
-            <button onclick="nav('page4')" class="w-full text-[10px] border border-yellow-500/30 text-yellow-500 py-3 rounded-2xl hover:bg-yellow-500/5">Оплатить криптой (USDT/BTC)</button>
+            <button onclick="startPay('card')" class="neon-btn w-full text-sm">Оплата Картой</button>
+            <button onclick="startPay('crypto')" class="w-full py-3 border border-yellow-500/30 text-yellow-500 rounded-2xl text-[10px] uppercase font-bold">Оплатить в USDT / BTC</button>
+        </div>
+        
+        <div id="pay-loader" class="hidden mt-4 text-center">
+            <p class="text-[9px] text-cyan-400 animate-pulse uppercase italic">Anti-Timeout active: не закрывайте окно...</p>
         </div>
     </div>
-    <div class="mt-8 text-center opacity-40">
-        <p class="text-[9px] uppercase tracking-widest">Secure Payment by Silverita Labs OÜ</p>
+</div>
+
+<div id="pg4" class="screen">
+    <header class="p-4 flex justify-between items-center glass rounded-none border-x-0 border-t-0">
+        <h1 class="text-xs font-black tracking-widest text-cyan-400">SMARTBELLY MONITOR</h1>
+        <div class="flex items-center gap-2">
+            <span class="text-[8px] text-gray-500 font-bold">VOICE</span>
+            <button onclick="this.classList.toggle('bg-cyan-500')" class="w-8 h-4 bg-gray-800 rounded-full border border-gray-600 transition-all"></button>
+        </div>
+    </header>
+
+    <div class="p-4 space-y-4 pb-24">
+        <div class="glass p-4 relative overflow-hidden">
+            <p class="text-[9px] font-bold text-cyan-400 mb-2 uppercase">AI Vision Scanner</p>
+            <div class="h-40 bg-black rounded-2xl relative overflow-hidden flex items-center justify-center border border-gray-800">
+                <div class="scan-line"></div>
+                <p class="text-[9px] text-gray-700 font-mono italic">READY TO ANALYZE...</p>
+            </div>
+            <button onclick="alert('ИИ: Индейка обнаружена. 120ккал. Добавлено в ваш холодильник.')" class="neon-btn w-full mt-3 py-2 text-[10px]">Сканировать продукт</button>
+        </div>
+
+        <div class="glass p-4">
+            <p class="text-[9px] text-gray-500 uppercase mb-4">Прогресс Соотношения (Вес/Рост)</p>
+            <canvas id="statChart" height="150"></canvas>
+        </div>
+
+        <div class="glass p-4">
+            <h4 class="text-[10px] font-bold uppercase mb-3">Обед (День 1): Салат с индейкой</h4>
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500" class="w-full h-40 object-cover rounded-2xl mb-3 border border-gray-800 shadow-lg">
+            <div class="space-y-3">
+                <p class="text-[10px] leading-relaxed text-gray-300">
+                    <span class="text-cyan-400 font-bold">ШАГ 1:</span> Купите филе в <b>Maxima</b> (сегодня цена 4.20€). Нарежьте и обжарьте 5 мин.
+                </p>
+                <div class="flex justify-between items-center text-[9px] bg-white/5 p-2 rounded-lg">
+                    <span class="text-gray-500">Ближайший MyFitness:</span>
+                    <span class="text-cyan-400 font-bold">400m от вас</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 w-full p-4 glass rounded-none border-t border-gray-800 flex justify-around items-center z-50">
+        <button class="flex flex-col items-center gap-1" onclick="alert('Напоминание: Время выпить 250мл воды!')">
+            <span class="text-lg">💧</span><span class="text-[7px] font-bold">ВОДА</span>
+        </button>
+        <button onclick="nav('pg1')" class="w-12 h-12 bg-cyan-400 rounded-full flex items-center justify-center -mt-8 text-black font-black text-sm shadow-xl">SB</button>
+        <button class="flex flex-col items-center gap-1" onclick="alert('Таймер приготовления: 15:00')">
+            <span class="text-lg">⏲️</span><span class="text-[7px] font-bold">ТАЙМЕР</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+    function nav(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'pg4') renderCharts();
+        window.scrollTo(0,0);
+    }
+
+    function startPay(method) {
+        document.getElementById('pay-loader').classList.remove('hidden');
+        // Имитация процесса Anti-Sleep (держать соединение)
+        setTimeout(() => nav('pg4'), 2500);
+    }
+
+    function renderCharts() {
+        const ctx = document.getElementById('statChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Сегодня'],
+                datasets: [{
+                    data: [82, 80.5, 79.8, 79, 78],
+                    borderColor: '#00ffcc',
+                    tension: 0.4,
+                    pointRadius: 2,
+                    borderWidth: 3,
+                    fill: true,
+                    backgroundColor: 'rgba(0, 255, 204, 0.05)'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { 
+                    y: { display: false },
+                    x: { grid: { display: false }, ticks: { color: '#444', font: { size: 8 } } }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
