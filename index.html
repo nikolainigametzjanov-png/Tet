@@ -3,172 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SmartBelly PRO | Silverita Labs Global</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Montserrat:wght@100;300;900&display=swap" rel="stylesheet">
+    <title>SmartBelly PRO | Infinite Ecosystem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Montserrat:wght@100;400;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --neon: #00ffcc; --dark: #020202; --gold: #d4af37; }
-        body { 
+        :root { --neon: #00ffcc; --dark: #000; }
+        body, html { 
             background: var(--dark); color: white; font-family: 'Montserrat', sans-serif;
-            margin: 0; overflow-x: hidden;
-        }
-        
-        /* ЛОГОТИП SILVERITA LABS - ФУТУРИЗМ */
-        .brand-logo { font-family: 'Syncopate', sans-serif; font-size: 40px; font-weight: 700; letter-spacing: -3px; }
-        .brand-logo span { color: var(--neon); text-shadow: 0 0 15px var(--neon); }
-        
-        /* ИННОВАЦИОННЫЙ ИНТЕРФЕЙС */
-        .glass-module {
-            background: rgba(255, 255, 255, 0.01);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(50px); border-radius: 50px 50px 0 0;
-            padding: 40px 30px;
+            margin: 0; padding: 0; height: 100vh; overflow: hidden;
         }
 
-        .screen { display: none; min-height: 100vh; flex-direction: column; animation: fadeUp 0.8s ease; }
-        .screen.active { display: flex; }
-
-        /* АТЛЕТИЧЕСКАЯ МОДЕЛЬ (ЗОЛОТОЕ СЕЧЕНИЕ) */
-        .atlas-svg { filter: drop-shadow(0 0 20px rgba(0, 255, 204, 0.2)); }
-        .muscle-group { fill: rgba(255,255,255,0.05); stroke: rgba(255,255,255,0.1); transition: 0.4s; cursor: pointer; }
-        .muscle-group.active { fill: var(--neon); opacity: 0.4; stroke: var(--neon); }
-
-        .price-card {
-            border: 1px solid rgba(255,255,255,0.05); padding: 30px; border-radius: 30px;
-            transition: 0.4s; position: relative; overflow: hidden;
-        }
-        .price-card.premium { border-color: var(--neon); background: rgba(0, 255, 204, 0.03); }
-
-        .cta-button {
-            background: white; color: black; padding: 24px; border-radius: 20px;
-            font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 3px;
-            width: 100%; text-align: center;
+        /* БЕСШОВНОЕ ПРОСТРАНСТВО (INFINITE CANVAS) */
+        #canvas {
+            display: flex;
+            width: 300vw; /* Три экрана в ширину, переход через свайп/скролл без перезагрузки */
+            height: 100vh;
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        .workspace-block {
+            width: 100vw; height: 100vh;
+            padding: 100px 40px 40px 40px;
+            flex-shrink: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Разделяем экран на аналитику и визуал */
+            gap: 40px;
+        }
+
+        /* ФИКСИРОВАННЫЙ БРЕНДИНГ */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 40px;
+            z-index: 100; display: flex; justify-content: space-between; align-items: center;
+        }
+        .sb-logo { font-family: 'Syncopate', sans-serif; font-size: 40px; letter-spacing: -4px; }
+        .sb-logo span { color: var(--neon); text-shadow: 0 0 20px var(--neon); }
+
+        /* ИНТЕРАКТИВНЫЕ ЭЛЕМЕНТЫ */
+        .glass-panel {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 50px; padding: 40px;
+            backdrop-filter: blur(20px);
+        }
+
+        .muscle { fill: rgba(255,255,255,0.02); stroke: rgba(0,255,204,0.1); transition: 0.6s; cursor: pointer; }
+        .muscle.active { fill: var(--neon); opacity: 0.4; filter: drop-shadow(0 0 20px var(--neon)); }
+
+        /* ИННОВАЦИОННАЯ НАВИГАЦИЯ (НЕ СТРАНИЦЫ, А ГЛУБИНА) */
+        .nav-dots {
+            position: fixed; right: 40px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 20px; z-index: 100;
+        }
+        .dot { width: 4px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 2px; transition: 0.4s; cursor: pointer; }
+        .dot.active { background: var(--neon); height: 80px; box-shadow: 0 0 15px var(--neon); }
+
+        .big-text { font-size: 8rem; font-weight: 900; line-height: 0.8; opacity: 0.05; position: absolute; z-index: -1; pointer-events: none; text-transform: uppercase; font-style: italic; }
+
+        @media (max-width: 768px) {
+            .workspace-block { grid-template-columns: 1fr; overflow-y: auto; }
+            #canvas { width: 100vw; height: auto; flex-direction: column; }
+        }
     </style>
 </head>
 <body>
 
-<div id="step1" class="screen active p-8">
-    <div class="mt-20 mb-20">
-        <div class="brand-logo uppercase">S<span>B</span> PRO</div>
-        <p class="text-[8px] tracking-[10px] text-gray-600 mt-2">SILVERITA LABS ECOSYSTEM</p>
+<header>
+    <div class="sb-logo">S<span>B</span></div>
+    <div class="flex items-center gap-8">
+        <div class="text-[9px] font-black tracking-[5px] text-gray-600 uppercase">Silverita Labs Ecosystem</div>
+        <div class="w-10 h-10 rounded-full border border-neon/30 flex items-center justify-center text-neon text-[10px] font-black">EE</div>
     </div>
+</header>
 
-    <h2 class="text-5xl font-black italic mb-12 leading-tight uppercase">Core<br>Matrix</h2>
-
-    <div class="space-y-6">
-        <div class="grid grid-cols-3 gap-4">
-            <input type="number" placeholder="AGE" class="bg-transparent border-b border-white/20 p-4 text-2xl font-black outline-none focus:border-neon">
-            <input type="number" placeholder="HT" class="bg-transparent border-b border-white/20 p-4 text-2xl font-black outline-none focus:border-neon">
-            <input type="number" placeholder="WT" class="bg-transparent border-b border-white/20 p-4 text-2xl font-black outline-none focus:border-neon">
-        </div>
-        <div class="grid grid-cols-2 gap-4 pt-10">
-            <div class="p-6 border border-white/10 rounded-3xl text-[10px] font-black uppercase tracking-widest text-gray-500" onclick="this.classList.toggle('border-neon')">Diabetes Risk</div>
-            <div class="p-6 border border-white/10 rounded-3xl text-[10px] font-black uppercase tracking-widest text-gray-500" onclick="this.classList.toggle('border-neon')">Back Trauma</div>
-        </div>
-    </div>
-
-    <div class="mt-auto pt-10">
-        <button onclick="nav('step2')" class="cta-button">Initialize Ecosystem</button>
-    </div>
+<div class="nav-dots">
+    <div class="dot active" onclick="move(0)"></div>
+    <div class="dot" onclick="move(1)"></div>
+    <div class="dot" onclick="move(2)"></div>
 </div>
 
-<div id="step2" class="screen p-8">
-    <h2 class="text-5xl font-black italic mb-12 leading-tight uppercase">Target<br>Anatomy</h2>
+<div id="canvas">
     
-    <div class="flex flex-col items-center">
-        <svg width="280" height="450" viewBox="0 0 100 200" class="atlas-svg">
-            <path id="head" d="M50 5 Q55 5 58 12 Q60 20 50 25 Q40 20 42 12 Q45 5 50 5" class="muscle-group" />
-            <path id="shoulders" d="M10 40 Q50 20 90 40 L95 70 Q50 75 5 70 Z" class="muscle-group" onclick="this.classList.toggle('active')" />
-            <path id="core" d="M25 70 Q50 75 75 70 L72 110 Q50 120 28 110 Z" class="muscle-group" onclick="this.classList.toggle('active')" />
-            <path id="legs" d="M28 110 Q50 120 72 110 L85 195 L55 195 L50 145 L45 195 L15 195 Z" class="muscle-group" onclick="this.classList.toggle('active')" />
-        </svg>
-        
-        <div class="w-full mt-10 space-y-4">
-            <div class="flex justify-between text-[10px] font-black text-gray-500 uppercase">
-                <span>Correction Focus:</span>
-                <span class="text-neon" id="focus-status">Awaiting Selection</span>
-            </div>
-            <button onclick="nav('step3')" class="cta-button">Configure Market</button>
-        </div>
-    </div>
-</div>
-
-<div id="step3" class="screen p-8">
-    <h2 class="text-5xl font-black italic mb-12 leading-tight uppercase">Retail<br>Sync</h2>
-
-    <div class="space-y-6">
-        <div class="grid grid-cols-3 gap-2 mb-10">
-            <div class="p-4 border border-white/5 rounded-2xl text-[8px] font-black uppercase text-center" onclick="this.classList.toggle('border-neon')">Maxima</div>
-            <div class="p-4 border border-white/5 rounded-2xl text-[8px] font-black uppercase text-center" onclick="this.classList.toggle('border-neon')">Selver</div>
-            <div class="p-4 border border-white/5 rounded-2xl text-[8px] font-black uppercase text-center" onclick="this.classList.toggle('border-neon')">Rimi</div>
-        </div>
-
-        <div class="price-card premium" onclick="nav('step4')">
-            <div class="flex justify-between items-start mb-4">
-                <span class="text-2xl font-black italic uppercase">PRO AI</span>
-                <span class="text-neon font-black">9.99€ / MO</span>
-            </div>
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-tighter leading-relaxed">Vision-анализ тарелки. Авто-парсинг цен Эстонии. План тренировок 2050 Ready.</p>
-        </div>
-
-        <div class="price-card" onclick="nav('step4')">
-            <div class="flex justify-between items-start mb-4">
-                <span class="text-2xl font-black italic uppercase">Elite</span>
-                <span class="text-white font-black">29.99€ / MO</span>
-            </div>
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-tighter leading-relaxed">Консьерж Silverita Labs. Прямая связь с нутрициологом 24/7. Медицинский чекап.</p>
-        </div>
-    </div>
-</div>
-
-<div id="step4" class="screen">
-    <div class="p-10 pb-0">
-        <div class="flex justify-between items-center mb-10">
-            <div class="brand-logo text-xl">S<span>B</span></div>
-            <div class="text-[10px] font-black uppercase text-neon animate-pulse">Syncing Devices...</div>
-        </div>
-        
-        <h3 class="text-5xl font-black italic uppercase mb-10">Day 01</h3>
-
-        <div class="relative group">
-            <div class="absolute -left-4 top-0 h-full w-1 bg-neon"></div>
-            <div class="flex justify-between items-start mb-6">
-                <div>
-                    <p class="text-[10px] font-black text-neon uppercase tracking-widest">Breakfast • 08:30</p>
-                    <h4 class="text-3xl font-black italic uppercase leading-none mt-2">Salmon<br>Oat-Mix</h4>
+    <section class="workspace-block">
+        <div class="big-text">Origins</div>
+        <div class="flex flex-col justify-center">
+            <h2 class="text-7xl font-black italic uppercase leading-none mb-8">Personal<br><span class="text-neon">Matrix</span></h2>
+            <div class="glass-panel space-y-8">
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="group">
+                        <p class="text-[10px] font-black text-gray-500 uppercase mb-2">Biometrics</p>
+                        <div class="flex gap-4">
+                            <input type="number" placeholder="AGE" class="w-full bg-transparent border-b border-white/10 p-2 text-xl font-black outline-none focus:border-neon">
+                            <input type="number" placeholder="WT" class="w-full bg-transparent border-b border-white/10 p-2 text-xl font-black outline-none focus:border-neon">
+                        </div>
+                    </div>
+                    <div class="group">
+                        <p class="text-[10px] font-black text-gray-500 uppercase mb-2">Restrictions</p>
+                        <div class="flex gap-2">
+                            <div class="px-4 py-2 border border-white/5 rounded-xl text-[9px] font-black uppercase cursor-pointer hover:border-neon" onclick="this.classList.toggle('text-neon')">Diabetes</div>
+                            <div class="px-4 py-2 border border-white/5 rounded-xl text-[9px] font-black uppercase cursor-pointer hover:border-neon" onclick="this.classList.toggle('text-neon')">Spine</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-3xl font-black italic">480</p>
-                    <p class="text-[8px] text-gray-600 font-black uppercase">calories</p>
+                <button class="w-full py-6 bg-white text-black font-black uppercase tracking-widest text-xs rounded-3xl" onclick="move(1)">Proceed to Evolution</button>
+            </div>
+        </div>
+        <div class="flex items-center justify-center relative">
+            <svg width="350" height="550" viewBox="0 0 100 200">
+                <path d="M50 5 Q55 5 58 12 Q60 20 50 25 Q40 20 42 12 Q45 5 50 5" class="muscle" />
+                <path d="M10 40 Q50 20 90 40 L95 70 Q50 75 5 70 Z" class="muscle" onclick="this.classList.toggle('active')" />
+                <path d="M25 70 Q50 75 75 70 L72 110 Q50 120 28 110 Z" class="muscle" onclick="this.classList.toggle('active')" />
+                <path d="M28 110 Q50 120 72 110 L85 195 L55 195 L50 145 L45 195 L15 195 Z" class="muscle" onclick="this.classList.toggle('active')" />
+            </svg>
+        </div>
+    </section>
+
+    <section class="workspace-block">
+        <div class="big-text">Economy</div>
+        <div class="flex flex-col justify-center">
+            <h2 class="text-7xl font-black italic uppercase leading-none mb-8 text-neon">Retail<br><span class="text-white">Layer</span></h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass-panel p-8 border-l-4 border-neon">
+                    <h3 class="font-black italic text-2xl mb-4">PRO AI</h3>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase leading-relaxed mb-6">Vision AI • Selver/Maxima Integration • Neural Plans</p>
+                    <p class="text-2xl font-black">9.99€<span class="text-xs text-gray-700 ml-2">/month</span></p>
+                </div>
+                <div class="glass-panel p-8 opacity-40">
+                    <h3 class="font-black italic text-2xl mb-4">ELITE</h3>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase leading-relaxed mb-6">Direct MD Access • Genetic Sync • Silverita Concierge</p>
+                    <p class="text-2xl font-black">29.99€</p>
                 </div>
             </div>
-            
-            <div class="p-8 border border-white/5 rounded-3xl bg-white/[0.02] space-y-6">
-                <div class="flex justify-between text-[10px] font-bold">
-                    <span class="text-gray-500 uppercase italic">Корзина Selver:</span>
-                    <span class="text-white">2.45 €</span>
+        </div>
+        <div class="flex flex-col justify-center space-y-4">
+            <p class="text-[10px] font-black text-gray-600 uppercase tracking-[10px] mb-4">Retail Networks EE</p>
+            <div class="grid grid-cols-3 gap-3">
+                <div class="p-6 glass-panel text-center font-black text-[10px] hover:border-neon cursor-pointer" onclick="this.style.color='#00ffcc'">SELVER</div>
+                <div class="p-6 glass-panel text-center font-black text-[10px] hover:border-neon cursor-pointer" onclick="this.style.color='#00ffcc'">MAXIMA</div>
+                <div class="p-6 glass-panel text-center font-black text-[10px] hover:border-neon cursor-pointer" onclick="this.style.color='#00ffcc'">RIMI</div>
+            </div>
+            <button class="w-full py-6 border border-white/10 text-white font-black uppercase tracking-widest text-xs rounded-3xl mt-10" onclick="move(2)">Generate Life Feed</button>
+        </div>
+    </section>
+
+    <section class="workspace-block">
+        <div class="big-text">Future</div>
+        <div class="flex flex-col justify-center">
+            <h2 class="text-7xl font-black italic uppercase leading-none mb-8">Daily<br><span class="text-neon">Feed</span></h2>
+            <div class="space-y-6 overflow-y-auto pr-4 no-scrollbar">
+                <div class="glass-panel relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 text-4xl font-black italic opacity-5 group-hover:opacity-20 transition">08:30</div>
+                    <p class="text-neon text-[10px] font-black uppercase tracking-widest mb-2">Breakfast</p>
+                    <h4 class="text-2xl font-black italic uppercase mb-4">Protein Oats + Berries</h4>
+                    <div class="flex justify-between items-center text-[10px] font-bold">
+                        <span class="text-gray-600 uppercase">Selver Price:</span>
+                        <span>2.15 €</span>
+                        <span class="text-neon">420 KCAL</span>
+                    </div>
                 </div>
-                <div class="text-[11px] leading-relaxed uppercase tracking-tighter font-bold">
-                    <span class="text-neon">Инфо:</span> 150г творога, 40г лосося, 30г овсянки. <br>
-                    <span class="text-gray-500">Рецепт:</span> Смешать овсянку с творогом, сверху выложить лосось. Без соли.
+                <div class="glass-panel opacity-40">
+                    <p class="text-gray-600 text-[10px] font-black uppercase tracking-widest mb-2">Lunch • 13:00</p>
+                    <h4 class="text-2xl font-black italic uppercase mb-4">Turkey & Quinoa</h4>
                 </div>
-                <button class="w-full p-6 border border-neon/30 rounded-2xl text-[10px] font-black uppercase text-neon tracking-[3px]">
-                    Analyze Plate (Vision AI)
+            </div>
+        </div>
+        <div class="flex flex-col justify-center">
+            <div class="glass-panel p-10 bg-neon/5 border-neon/20">
+                <h3 class="text-neon font-black italic text-xl mb-4">VISION AI READY</h3>
+                <p class="text-[11px] text-gray-400 font-bold uppercase leading-loose mb-8">
+                    Наведите камеру на тарелку. <br> 
+                    ИИ Silverita Labs проведет молекулярный анализ состава и сопоставит с вашим планом.
+                </p>
+                <button class="w-full py-8 border-2 border-neon text-neon font-black uppercase tracking-[5px] text-xs rounded-3xl hover:bg-neon hover:text-black transition">
+                    Start Scanning
                 </button>
             </div>
         </div>
-    </div>
+    </section>
+
 </div>
 
 <script>
-    function nav(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo({top: 0, behavior: 'smooth'});
+    function move(index) {
+        document.getElementById('canvas').style.transform = `translateX(-${index * 100}vw)`;
+        document.querySelectorAll('.dot').forEach((d, i) => {
+            d.classList.toggle('active', i === index);
+        });
     }
+
+    // Поддержка колесика мыши для "размаха"
+    window.addEventListener('wheel', (e) => {
+        if (e.deltaY > 0) move(1); // Упрощенно для примера
+        if (e.deltaY < 0) move(0);
+    });
 </script>
 </body>
 </html>
