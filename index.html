@@ -5,109 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SmartBelly PRO | Silverita Labs</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: #fff; font-family: 'Montserrat', sans-serif; margin: 0; overflow-x: hidden; }
-        .luxury-bg { background: radial-gradient(circle at top, #111 0%, #000 100%); }
-        .chrome-title { font-family: 'Cinzel', serif; background: linear-gradient(180deg, #fff 0%, #777 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 35px; }
-        #camera-box { width: 100%; height: 280px; border-radius: 25px; overflow: hidden; position: relative; display: none; border: 1px solid #00f3ff; box-shadow: 0 0 20px rgba(0,243,255,0.1); }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        .scan-line { position: absolute; width: 100%; height: 3px; background: #00f3ff; box-shadow: 0 0 20px #00f3ff; animation: scan 2.5s infinite ease-in-out; }
-        @keyframes scan { 0%, 100% { top: 5%; } 50% { top: 95%; } }
-        .btn-luxury { background: #fff; color: #000; font-weight: 900; letter-spacing: 3px; border-radius: 50px; transition: 0.4s; text-transform: uppercase; border: none; cursor: pointer; }
-        .btn-luxury:active { transform: scale(0.95); background: #00f3ff; }
-        .ai-badge { background: rgba(0, 243, 255, 0.1); color: #00f3ff; font-size: 8px; padding: 4px 10px; border-radius: 10px; border: 1px solid rgba(0,243,255,0.3); }
+        body { background: #000; color: #fff; font-family: 'Montserrat', sans-serif; margin: 0; overflow: hidden; }
+        .page { display: none; min-height: 100vh; flex-direction: column; padding: 30px; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .active-page { display: flex; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .glass-panel { background: rgba(255,255,255,0.02); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.08); border-radius: 40px; }
+        .btn-luxury { background: #fff; color: #000; font-weight: 900; border-radius: 60px; text-transform: uppercase; letter-spacing: 3px; transition: 0.5s; cursor: pointer; }
+        .btn-luxury:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; padding: 20px 0; z-index: 1000; }
+        .nav-btn { font-size: 8px; color: #444; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+        .nav-btn.active { color: #00f3ff; }
+        .vip-gold { border: 1px solid #d4af37; position: relative; }
+        .vip-gold::after { content: 'VIP'; position: absolute; top: 10px; right: 20px; color: #d4af37; font-size: 10px; font-weight: 900; }
     </style>
 </head>
-<body class="luxury-bg min-h-screen flex flex-col p-6">
-    
-    <header class="text-center py-10">
-        <h1 class="chrome-title text-5xl font-bold">SB PRO</h1>
-        <div class="flex justify-center gap-2 mt-2">
-            <span class="ai-badge uppercase tracking-widest">Vision AI v4.0</span>
-            <span class="ai-badge uppercase tracking-widest">Silverita Labs</span>
+<body>
+
+    <div id="p1" class="page active-page justify-center text-center">
+        <h1 style="font-family:'Cinzel'" class="text-6xl font-bold mb-4 tracking-tighter">SB PRO</h1>
+        <p class="text-[10px] tracking-[0.8em] opacity-30 uppercase mb-16">Silverita Labs OÜ</p>
+        <div class="glass-panel p-10">
+            <h2 class="text-2xl font-light mb-6">Экосистема долголетия</h2>
+            <p class="text-[11px] opacity-40 mb-10 leading-relaxed uppercase tracking-widest">Анализ тарелки • Мониторинг здоровья • Ритейл Эстонии</p>
+            <button onclick="nextPage('p2')" class="btn-luxury w-full py-6 text-xs">Войти в систему</button>
         </div>
-    </header>
+    </div>
 
-    <main class="w-full max-w-md mx-auto flex-grow">
-        <div class="glass-card p-6 mb-6">
-            <div id="sys-status" class="text-[#00f3ff] font-mono text-[9px] mb-4 tracking-[0.3em] uppercase opacity-70">
-                [ Инициализация системы... ]
+    <div id="p2" class="page justify-center">
+        <div class="mb-12">
+            <div class="h-1 w-12 bg-[#00f3ff] mb-6"></div>
+            <h2 class="text-4xl font-black uppercase italic leading-none">Ваша ключевая цель?</h2>
+        </div>
+        <div class="space-y-4">
+            <button onclick="setGoal('Похудение')" class="glass-panel w-full p-8 text-left hover:bg-white/5 transition">
+                <span class="block text-[10px] opacity-30 uppercase mb-2">Цель 01</span>
+                <span class="text-xl font-bold">СНИЖЕНИЕ ВЕСА</span>
+            </button>
+            <button onclick="setGoal('Здоровье')" class="glass-panel w-full p-8 text-left hover:bg-white/5 transition">
+                <span class="block text-[10px] opacity-30 uppercase mb-2">Цель 02</span>
+                <span class="text-xl font-bold">ЧИСТАЯ ЭНЕРГИЯ</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="p3" class="page pt-12 pb-32">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <p id="display-goal" class="text-[9px] text-[#00f3ff] uppercase tracking-widest mb-1">ЦЕЛЬ: --</p>
+                <h1 class="text-2xl font-black italic">SMARTBELLY PRO</h1>
             </div>
+            <div class="text-[10px] text-right font-bold opacity-30 uppercase">Estonia / <span id="city">Tartu</span></div>
+        </header>
 
-            <div id="camera-box">
-                <video id="video" autoplay playsinline></video>
-                <div class="scan-line"></div>
-            </div>
+        <div class="glass-panel p-6 mb-6 vip-gold">
+            <h3 class="text-xs font-black mb-1 uppercase text-[#d4af37]">VIP Модуль: Scan AI</h3>
+            <p class="text-[10px] opacity-40 mb-8">Мгновенный анализ КБЖУ через камеру</p>
+            <button onclick="alert('Доступно в VIP-пакете. Перейдите в Telegram для активации.')" class="w-full py-4 rounded-full border border-[#d4af37] text-[#d4af37] text-[10px] font-black uppercase tracking-widest">Активировать</button>
+        </div>
 
-            <div id="ai-result" class="hidden animate-pulse">
-                <div class="text-[10px] opacity-40 uppercase tracking-widest mb-2">Объект распознан:</div>
-                <h2 id="food-name" class="text-3xl font-black italic uppercase text-white mb-1">---</h2>
-                <div id="food-stats" class="text-[#00f3ff] font-bold text-base border-b border-white/10 pb-4">---</div>
-                <div class="mt-4">
-                    <div class="text-[10px] opacity-40 uppercase tracking-widest mb-1">Аналитика Silverita:</div>
-                    <p id="food-advice" class="text-[11px] leading-relaxed italic text-white/80 bg-white/5 p-3 rounded-xl border border-white/5">---</p>
+        <div class="glass-panel p-6">
+            <h3 class="text-[10px] font-black uppercase tracking-widest mb-6 opacity-20">Рекомендация Silverita</h3>
+            <div class="flex items-center gap-4 p-4 bg-white/5 rounded-3xl border border-white/5">
+                <div class="w-12 h-12 rounded-2xl bg-[#00f3ff]/10 flex items-center justify-center text-xl">🥗</div>
+                <div>
+                    <div class="text-[11px] font-bold">Салат с киноа и лососем</div>
+                    <div class="text-[9px] opacity-40 mt-1">Ингредиенты доступны в COOP / Grossi</div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <button id="main-action" onclick="activateAI()" class="btn-luxury w-full py-6 shadow-2xl text-base">
-            🚀 СКАНИРОВАТЬ ТАРЕЛКУ
-        </button>
-    </main>
-
-    <footer class="py-10 text-center">
-        <div id="location-info" class="text-[10px] opacity-30 tracking-[0.4em] uppercase mb-2">Эстония / Тарту</div>
-        <div class="text-[8px] opacity-20 uppercase tracking-widest">
-            SmartBelly PRO &copy; 2026. Все права защищены.
-        </div>
-    </footer>
+    <nav id="nav" class="nav-bar hidden">
+        <div onclick="nextPage('p3')" class="nav-btn active">Главная</div>
+        <div onclick="alert('Раздел диет обновляется')" class="nav-btn">Рацион</div>
+        <div onclick="nextPage('p2')" class="nav-btn">Цели</div>
+    </nav>
 
     <script>
-        async function setupGeo() {
-            try {
-                const r = await fetch('https://ipapi.co/json/');
-                const d = await r.json();
-                document.getElementById('sys-status').innerText = `[ СИСТЕМА ГОТОВА: ${d.city.toUpperCase()} ]`;
-                document.getElementById('location-info').innerText = `${d.country_name} / ${d.city}`;
-            } catch {
-                document.getElementById('sys-status').innerText = '[ СИСТЕМА ГОТОВА: ЭСТОНИЯ ]';
-            }
+        function nextPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById(id).classList.add('active-page');
+            document.getElementById('nav').style.display = (id === 'p3') ? 'flex' : 'none';
         }
 
-        async function activateAI() {
-            const btn = document.getElementById('main-action');
-            const cam = document.getElementById('camera-box');
-            const res = document.getElementById('ai-result');
-            const status = document.getElementById('sys-status');
-
-            btn.style.display = 'none';
-            res.classList.add('hidden');
-            cam.style.display = 'block';
-            status.innerText = '[ ПОДКЛЮЧЕНИЕ ГАДЖЕТА... ]';
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                document.getElementById('video').srcObject = stream;
-                status.innerText = '[ НЕЙРОСЕТЬ АНАЛИЗИРУЕТ ОБЪЕКТ... ]';
-
-                setTimeout(() => {
-                    stream.getTracks().forEach(t => t.stop());
-                    cam.style.display = 'none';
-                    processAI();
-                }, 4000);
-            } catch (err) {
-                status.innerText = '[ ОШИБКА: ПРОВЕРЬТЕ ДОСТУП К КАМЕРЕ ]';
-                setTimeout(processAI, 2000); 
-            }
+        function setGoal(goal) {
+            document.getElementById('display-goal').innerText = 'ЦЕЛЬ: ' + goal;
+            nextPage('p3');
         }
 
-        function processAI() {
-            const res = document.getElementById('ai-result');
-            document.getElementById('sys-status').innerText = '[ АНАЛИЗ ЗАВЕРШЕН ]';
-            res.classList.remove('hidden');
-            
-            // Имитация работы Мозга (AI Vision)
-            document.getElementById('food-name').innerText = 'Стейк из лосося';
-            document.getElementById('food-stats').innerText = '320 ККА
+        fetch('https://ipapi.co/json/').then(r => r.json()).then(d => {
+            document.getElementById('city').innerText = d.city;
+        });
+    </script>
+</body>
+</html>
