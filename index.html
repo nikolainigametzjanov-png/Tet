@@ -1,18 +1,292 @@
-<script>
-    const SilveritaEngine = {
-        user: { weight: 88, trauma: 'L4-L5', diabetes: true },
-        retail: { store: 'Selver', discount: 0.15 },
-        
-        recalculateMatrix: function() {
-            console.log("SmartBelly PRO: Пересчет биометрии под ограничения...");
-            // Алгоритм фильтрации продуктов из Maxima под диабет
-            this.applyMedicalFilters();
-        },
-        
-        applyMedicalFilters: function() {
-            if(this.user.diabetes) {
-                // Исключение сахаров и быстрых углей из выдачи Selver API
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXIC.PRO | Silverita Labs OÜ</title>
+    <style>
+        :root {
+            --bg: #F2F2F7; /* Apple Neutral */
+            --glass: rgba(255, 255, 255, 0.7);
+            --neon-profit: #34C759; /* Profit Green */
+            --neon-tech: #007AFF;   /* Tech Blue */
+            --accent: #D2691E;      /* Silverita Terracotta */
+            --text: #1C1C1E;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER & PROFIT BUFFER */
+        header {
+            width: 100%;
+            padding: 30px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(242, 242, 247, 0.8);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: #000;
+        }
+
+        .profit-capsule {
+            background: white;
+            padding: 10px 25px;
+            border-radius: 40px;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .buffer-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #8E8E93; }
+        .buffer-amount { font-size: 18px; font-weight: 800; color: var(--neon-profit); }
+
+        /* GRID SYSTEM (10 HUBS) */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+
+        /* HEXAGON GEOMETRY (Glassmorphism) */
+        .hub-card {
+            width: 160px;
+            height: 184px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.05));
+        }
+
+        .hub-content {
+            width: 100%;
+            height: 100%;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.3);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hub-card:hover { transform: translateY(-10px) scale(1.05); }
+        .hub-card:hover .hub-content { background: white; border-color: var(--neon-tech); }
+
+        .hub-icon { font-size: 32px; margin-bottom: 10px; }
+        .hub-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #3A3A3C; }
+
+        /* MODAL WINDOW (PROFIT HUB) */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 30px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #F2F2F7;
+            padding-bottom: 15px;
+        }
+
+        .modal-title { font-size: 24px; font-weight: 800; color: #000; }
+
+        .data-point {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px 0;
+        }
+
+        .label { font-weight: 600; color: #8E8E93; }
+        .value { font-weight: 700; color: var(--text); }
+
+        .btn-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: #F2F2F7;
+            border: none;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">NEXIC.PRO</div>
+        <div class="profit-capsule">
+            <span class="buffer-label">Profit Buffer</span>
+            <span class="buffer-amount">€25,000.00</span>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="hub-grid">
+            
+<div class="hub-card" onclick="openModal('profit')">
+                <div class="hub-content">
+                    <span class="hub-icon">📈</span>
+                    <span class="hub-title">Profit</span>
+                </div>
+            </div>
+
+            <div class="hub-card" onclick="alert('Vitality Hub: Мониторинг энергии активирован. Статус: Норма.')">
+                <div class="hub-content">
+                    <span class="hub-icon">🌿</span>
+                    <span class="hub-title">Vitality</span>
+                </div>
+            </div>
+
+            <div class="hub-card">
+                <div class="hub-content">
+                    <span class="hub-icon">🛡️</span>
+                    <span class="hub-title">Legal</span>
+                </div>
+            </div>
+
+            <div class="hub-card">
+                <div class="hub-content">
+                    <span class="hub-icon">💎</span>
+                    <span class="hub-title">Silverita</span>
+                </div>
+            </div>
+
+            <div class="hub-card">
+                <div class="hub-content">
+                    <span class="hub-icon">⚙️</span>
+                    <span class="hub-title">Tech</span>
+                </div>
+            </div>
+
+            <div class="hub-card">
+                <div class="hub-content">
+                    <span class="hub-icon">🤝</span>
+                    <span class="hub-title">Social</span>
+                </div>
+            </div>
+
+            <div class="hub-card">
+                <div class="hub-content">
+                    <span class="hub-icon">🏠</span>
+                    <span class="hub-title">Family</span>
+                </div>
+            </div>
+
+            <div class="hub-card">
+                <div class="hub-content">
+                    <span class="hub-icon">📚</span>
+                    <span class="hub-title">Library</span>
+                </div>
+            </div>
+
+            <div class="hub-card">
+                <div class="hub-content">
+                    <span class="hub-icon">🚀</span>
+                    <span class="hub-title">Future</span>
+                </div>
+            </div>
+
+            <div class="hub-card">
+                <div class="hub-content">
+                    <span class="hub-icon">🧠</span>
+                    <span class="hub-title">AI Core</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="profit-modal" class="modal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeModal()">×</button>
+            <div class="modal-header">
+                <h2 class="modal-title">Profit Hub</h2>
+            </div>
+            <div class="data-point">
+                <span class="label">Главный буфер</span>
+                <span class="value" style="color: var(--neon-profit);">€25,000.00</span>
+            </div>
+            <div class="data-point">
+                <span class="label">Silverita Labs OÜ</span>
+                <span class="value">Активен</span>
+            </div>
+            <div class="data-point">
+                <span class="label">Стратегия</span>
+                <span class="value">Silverita Excellence</span>
+            </div>
+            <div class="data-point">
+                <span class="label">Статус</span>
+                <span class="value" style="color: var(--neon-profit);">Безопасно</span>
+            </div>
+            <button style="width:100%; padding:15px; border-radius:15px; border:none; background: #000; color:#fff; font-weight:700; cursor:pointer; margin-top:20px;">
+                Детальный отчет
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            if(id === 'profit') {
+                document.getElementById('profit-modal').style.display = 'flex';
             }
         }
-    };
-</script>
+        function closeModal() {
+            document.getElementById('profit-modal').style.display = 'none';
+        }
+        // Закрытие при клике на фон
+        window.onclick = function(event) {
+            let modal = document.getElementById('profit-modal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
+
+
